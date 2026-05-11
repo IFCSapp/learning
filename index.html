@@ -77,9 +77,12 @@ a:hover { text-decoration: underline; }
 .scene-list { list-style: none; padding: 10px; margin: 0; display: flex; flex-direction: column; gap: 8px; }
 .scene-group { margin: 6px 2px 4px; padding: 8px 4px 4px; color: var(--muted); font-size: 0.86rem; font-weight: 800; border-top: 1px solid var(--border-soft); }
 .scene-group:first-child { border-top: 0; }
-.scene-item { width: 100%; text-align: left; border: 1px solid var(--border-soft); background: #fff; border-radius: 13px; padding: 12px; display: block; color: var(--text); }
+.scene-item { width: 100%; text-align: left; border: 1px solid var(--border-soft); background: #fff; border-radius: 13px; padding: 10px; display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 10px; align-items: center; color: var(--text); }
 .scene-item:hover { border-color: var(--primary-border); background: #fbfffe; }
 .scene-item.active { border-color: var(--primary-border); background: var(--primary-soft); box-shadow: inset 3px 0 0 var(--primary); }
+.scene-thumb { width: 76px; aspect-ratio: 16 / 9; border-radius: 9px; overflow: hidden; border: 1px solid var(--border-soft); background: #eef2f6; }
+.scene-thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.scene-thumb.empty { display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 0.72rem; font-weight: 800; }
 .scene-item-title { display: block; font-weight: 800; line-height: 1.45; }
 .scene-item-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin-top: 7px; color: var(--muted); font-size: 0.8rem; }
 .cg-badge { display: inline-flex; align-items: center; border-radius: 999px; padding: 2px 8px; font-size: 0.74rem; font-weight: 800; color: #41505f; background: #f1f5f9; border: 1px solid #dfe6ee; }
@@ -139,6 +142,8 @@ a:hover { text-decoration: underline; }
 .footer { color: var(--muted); text-align: center; font-size: 0.85rem; padding: 24px 0; }
 .scene-visual { margin: 0; border: 1px solid var(--border-soft); border-radius: 14px; overflow: hidden; background: #eef2f6; }
 .scene-visual img { display: block; width: 100%; aspect-ratio: 16 / 9; height: auto; object-fit: cover; }
+.scene-visual figcaption { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; padding: 9px 11px; background: #fff; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--border-soft); }
+.scene-visual figcaption a { font-weight: 800; }
 .detail-head + .scene-visual { margin-top: -4px; }
 .scene-row .scene-visual { margin: 10px 0 12px; }
 
@@ -339,11 +344,13 @@ a:hover { text-decoration: underline; }
     line-height: 1.45;
   }
   .scene-item {
-    min-height: 64px;
+    min-height: 72px;
     border-radius: 14px;
-    padding: 13px 12px;
+    grid-template-columns: 82px minmax(0, 1fr);
+    padding: 10px;
     box-shadow: 0 1px 2px rgba(15,23,42,0.03);
   }
+  .scene-thumb { width: 82px; border-radius: 10px; }
   .scene-item-title { font-size: 0.96rem; line-height: 1.48; }
   .scene-item-meta { gap: 5px; margin-top: 8px; font-size: 0.74rem; line-height: 1.35; }
   .cg-badge { font-size: 0.7rem; padding: 2px 7px; }
@@ -798,9 +805,13 @@ function highlight(s) {
 }
 function sceneButton(item, activeId, mode) {
   const title = mode === 'search' ? highlight(item.title) : escapeHTML(item.title);
+  const thumb = sceneThumbHTML(item);
   return `<li><button type="button" class="scene-item ${item.id === activeId ? 'active' : ''}" data-id="${escapeHTML(item.id)}" data-mode="${mode}">
-    <span class="scene-item-title">${title}</span>
-    <span class="scene-item-meta"><span>${escapeHTML(item.cgTitle)}</span><span class="cg-badge">${escapeHTML(item.cg)}</span><span class="cg-badge">${escapeHTML(item.id)}</span></span>
+    ${thumb}
+    <span class="scene-item-body">
+      <span class="scene-item-title">${title}</span>
+      <span class="scene-item-meta"><span>${escapeHTML(item.cgTitle)}</span><span class="cg-badge">${escapeHTML(item.cg)}</span><span class="cg-badge">${escapeHTML(item.id)}</span></span>
+    </span>
   </button></li>`;
 }
 function groupedListHTML(items, activeId, mode) {
@@ -819,7 +830,15 @@ function groupedListHTML(items, activeId, mode) {
 function sceneImageHTML(item) {
   const src = SCENE_IMAGES[item?.id];
   if(!src) return '';
-  return `<figure class="scene-visual"><img src="${escapeHTML(src)}" alt="${escapeHTML(item.title)}の場面イラスト" loading="lazy" width="768" height="432"></figure>`;
+  return `<figure class="scene-visual">
+    <img src="${escapeHTML(src)}" alt="${escapeHTML(item.title)}の場面イラスト" loading="lazy" width="768" height="432">
+    <figcaption><span>${escapeHTML(item.id)} の場面画像</span><a href="${escapeHTML(src)}" target="_blank" rel="noopener">画像を開く</a></figcaption>
+  </figure>`;
+}
+function sceneThumbHTML(item) {
+  const src = SCENE_IMAGES[item?.id];
+  if(!src) return '<span class="scene-thumb empty">画像なし</span>';
+  return `<span class="scene-thumb"><img src="${escapeHTML(src)}" alt="" loading="lazy" width="160" height="90"></span>`;
 }
 function detailHTML(item) {
   if(!item) return '<div class="empty-state">左の場面を選ぶと、ここに説明が表示されます。</div>';
