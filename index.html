@@ -517,54 +517,11 @@ a:hover { text-decoration: underline; }
     border-radius: 16px;
   }
   .knowledge-document .table-wrap {
-    border: none;
-    background: transparent;
-    overflow: visible;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
   .knowledge-document table {
-    min-width: 0;
-    border-collapse: separate;
-    border-spacing: 0 12px;
-  }
-  .knowledge-document thead {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-  }
-  .knowledge-document tbody,
-  .knowledge-document tr,
-  .knowledge-document td {
-    display: block;
-    width: 100%;
-  }
-  .knowledge-document tr {
-    overflow: hidden;
-    border: 1px solid #dbe3ee;
-    border-radius: 15px;
-    background: #ffffff !important;
-    box-shadow: 0 4px 16px rgba(15,23,42,.04);
-  }
-  .knowledge-document td {
-    border-right: none;
-    border-bottom: 1px solid #dbe3ee;
-    padding: 12px 14px;
-  }
-  .knowledge-document td:last-child {
-    border-bottom: none;
-  }
-  .knowledge-document td::before {
-    content: attr(data-label);
-    display: block;
-    color: #64748b;
-    font-weight: 800;
-    font-size: .78rem;
-    margin-bottom: 4px;
-  }
-  .knowledge-document tbody td:first-child {
-    background: #f8fafc;
+    min-width: 760px;
   }
 
   .panel { border-radius: 14px; box-shadow: none; overflow: hidden; }
