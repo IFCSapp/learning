@@ -45,12 +45,12 @@ button { cursor: pointer; }
 a { color: var(--primary); text-decoration: none; }
 a:hover { text-decoration: underline; }
 .site-header { background: #fff; border-bottom: 1px solid var(--border); }
-.header-inner { max-width: 1280px; margin: 0 auto; padding: 16px 20px 14px; display: grid; grid-template-columns: minmax(260px, 0.72fr) minmax(320px, 1fr); gap: 14px 24px; align-items: end; }
+.header-inner { max-width: 1280px; margin: 0 auto; padding: 16px 20px 14px; display: grid; grid-template-columns: minmax(240px, max-content) minmax(0, 1fr); gap: 14px 24px; align-items: center; }
 .site-header h1 { margin: 0; font-size: clamp(1.35rem, 2.2vw, 1.9rem); line-height: 1.35; letter-spacing: 0; }
 .site-header p { margin: 0; color: var(--muted); max-width: 720px; font-size: 0.94rem; line-height: 1.65; }
 .app-shell { max-width: 1280px; margin: 0 auto; padding: 14px 20px 20px; }
-.nav-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-.tab-btn { border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 999px; padding: 10px 16px; font-weight: 700; }
+.nav-tabs { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; min-width: 0; }
+.tab-btn { border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 999px; padding: 10px 16px; font-weight: 700; white-space: nowrap; }
 .tab-btn[aria-selected="true"] { background: var(--primary-soft); border-color: var(--primary-border); color: var(--primary); }
 .view { display: none; }
 .view.active { display: block; }
@@ -141,6 +141,211 @@ a:hover { text-decoration: underline; }
 .tag-filter-wrap { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border-soft); }
 .highlight { background: #fff0bd; border-radius: 4px; padding: 0 2px; }
 .reading-section .section-note { color: var(--muted); margin: 0 0 16px; }
+.knowledge-document {
+  width: 100%;
+  padding: 24px 16px 48px;
+  background: linear-gradient(180deg, #ecfeff 0%, #f8fafc 260px, #f8fafc 100%);
+  color: #1f2937;
+  line-height: 1.85;
+}
+.knowledge-document .hero {
+  max-width: 960px;
+  margin: 8px auto 22px;
+  padding: clamp(28px, 5vw, 56px);
+  border: 1px solid rgba(13, 148, 136, 0.18);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 14px 35px rgba(15, 23, 42, 0.08);
+}
+.knowledge-document .kicker {
+  display: inline-flex;
+  margin-bottom: 18px;
+  border-radius: 999px;
+  background: #ccfbf1;
+  color: #0f766e;
+  padding: 6px 12px;
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+.knowledge-document h1 {
+  margin: 0 0 14px;
+  color: #0f172a;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+.knowledge-document .subtitle {
+  margin: 0 0 24px;
+  color: #64748b;
+  font-weight: 600;
+  font-size: clamp(1rem, 2.2vw, 1.2rem);
+}
+.knowledge-document .toc {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  gap: 8px;
+  max-width: 960px;
+  margin: 0 auto;
+  overflow-x: auto;
+  padding: 12px 0 14px;
+  background: linear-gradient(180deg, #f8fafc 75%, rgba(248,250,252,0));
+  scrollbar-width: thin;
+}
+.knowledge-document .toc a {
+  flex: 0 0 auto;
+  border: 1px solid #dbe3ee;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #334155;
+  padding: 8px 12px;
+  text-decoration: none;
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+.knowledge-document .content-section,
+.knowledge-document .callout {
+  max-width: 960px;
+  margin: 18px auto;
+  border: 1px solid #dbe3ee;
+  background: #ffffff;
+  box-shadow: 0 8px 26px rgba(15, 23, 42, 0.04);
+}
+.knowledge-document .content-section {
+  border-radius: 18px;
+  padding: clamp(22px, 3vw, 34px);
+}
+.knowledge-document h2 {
+  margin: 0 0 18px;
+  border-left: 6px solid #0f766e;
+  color: #0f172a;
+  padding-left: 14px;
+  font-size: clamp(1.35rem, 3vw, 1.9rem);
+  line-height: 1.45;
+  letter-spacing: 0;
+}
+.knowledge-document p { margin: 0 0 1em; }
+.knowledge-document p:last-child { margin-bottom: 0; }
+.knowledge-document .check-list {
+  display: grid;
+  gap: 10px;
+  margin: 22px 0;
+  padding: 0;
+  list-style: none;
+}
+.knowledge-document .check-list li {
+  position: relative;
+  border: 1px solid #dbe3ee;
+  border-radius: 14px;
+  background: #f1f5f9;
+  padding: 12px 14px 12px 44px;
+}
+.knowledge-document .check-list li::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  top: 1.15em;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #0f766e;
+  box-shadow: inset 0 0 0 4px #ccfbf1;
+}
+.knowledge-document .note-line {
+  border: 1px solid #fed7aa;
+  border-radius: 12px;
+  background: #fff7ed;
+  color: #7c2d12;
+  padding: 12px 14px;
+  font-weight: 700;
+}
+.knowledge-document .callout {
+  border-radius: 20px;
+  padding: clamp(18px, 3vw, 26px);
+}
+.knowledge-document .callout-main {
+  background: linear-gradient(135deg, #ecfeff, #ffffff);
+  border-color: rgba(15, 118, 110, 0.25);
+}
+.knowledge-document .callout-principle { background: #f0fdf4; border-color: #bbf7d0; }
+.knowledge-document .callout-warning { background: #fff7ed; border-color: #fdba74; }
+.knowledge-document .callout-label {
+  display: inline-flex;
+  margin: 0 0 8px;
+  color: #0f766e;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+.knowledge-document .callout-warning .callout-label { color: #b45309; }
+.knowledge-document .table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  margin: 22px 0;
+  border: 1px solid #dbe3ee;
+  border-radius: 16px;
+  background: #ffffff;
+}
+.knowledge-document table {
+  width: 100%;
+  min-width: 860px;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  line-height: 1.75;
+}
+.knowledge-document table.data-table th:nth-child(1),
+.knowledge-document table.data-table td:nth-child(1) { width: 24%; }
+.knowledge-document table.data-table th:nth-child(2),
+.knowledge-document table.data-table td:nth-child(2) { width: 32%; }
+.knowledge-document table.data-table th:nth-child(3),
+.knowledge-document table.data-table td:nth-child(3) { width: 44%; }
+.knowledge-document .step-table th:nth-child(1),
+.knowledge-document .step-table td:nth-child(1) { width: 22%; }
+.knowledge-document .step-table th:nth-child(2),
+.knowledge-document .step-table td:nth-child(2) { width: 34%; }
+.knowledge-document .step-table th:nth-child(3),
+.knowledge-document .step-table td:nth-child(3) { width: 44%; }
+.knowledge-document th,
+.knowledge-document td {
+  border-right: 1px solid #dbe3ee;
+  border-bottom: 1px solid #dbe3ee;
+  padding: 14px 16px;
+  text-align: left;
+  vertical-align: top;
+}
+.knowledge-document th:last-child,
+.knowledge-document td:last-child { border-right: none; }
+.knowledge-document tr:last-child td { border-bottom: none; }
+.knowledge-document thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #0f766e;
+  color: #ffffff;
+  font-weight: 800;
+}
+.knowledge-document tbody tr:nth-child(even) { background: #f8fafc; }
+.knowledge-document tbody td:first-child { color: #0f172a; font-weight: 700; }
+.knowledge-document .emergency-table thead th { background: #b45309; }
+.knowledge-document .phrase-table thead th { background: #1d4ed8; }
+.knowledge-document .use-table thead th { background: #334155; }
+.knowledge-document .back-top {
+  display: flex;
+  max-width: 960px;
+  margin: 28px auto 0;
+  color: #0f766e;
+  text-decoration: none;
+  font-weight: 700;
+}
+.knowledge-document footer {
+  max-width: 960px;
+  margin: 0 auto;
+  color: #64748b;
+  text-align: center;
+  font-size: 0.88rem;
+  padding: 28px 0 0;
+}
 .cg-article { margin-bottom: 18px; padding: 18px; }
 .cg-article-head { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
 .cg-article-head h2 { margin: 0; font-size: 1.35rem; }
@@ -285,20 +490,16 @@ a:hover { text-decoration: underline; }
   .site-header { background: rgba(255,255,255,0.96); }
   .header-inner { display: block; padding: 12px 14px 10px; }
   .site-header h1 { font-size: 1.18rem; line-height: 1.35; margin-bottom: 6px; }
-  .site-header p { font-size: 0.84rem; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .app-shell { padding: 12px; max-width: 100%; }
 
   .nav-tabs {
-    position: sticky;
-    top: 0;
-    z-index: 50;
     flex-wrap: nowrap;
     gap: 8px;
     overflow-x: auto;
-    margin: 0 -12px 12px;
-    padding: 10px 12px;
-    background: rgba(245,247,248,0.96);
-    border-bottom: 1px solid var(--border-soft);
+    justify-content: flex-start;
+    margin: 8px -14px 0;
+    padding: 8px 14px 2px;
+    border-top: 1px solid var(--border-soft);
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
@@ -307,6 +508,74 @@ a:hover { text-decoration: underline; }
   .tag-filter-wrap::-webkit-scrollbar,
   .area-filter-chips::-webkit-scrollbar { display: none; }
   .tab-btn { flex: 0 0 auto; min-height: 42px; padding: 9px 14px; font-size: 0.92rem; box-shadow: 0 1px 2px rgba(15,23,42,0.04); }
+
+  .knowledge-document {
+    margin: 0 -12px;
+    padding: 12px 12px 40px;
+  }
+  .knowledge-document .hero {
+    border-radius: 22px;
+    margin-top: 0;
+  }
+  .knowledge-document .toc {
+    margin-left: -12px;
+    margin-right: -12px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .knowledge-document .content-section {
+    border-radius: 16px;
+  }
+  .knowledge-document .table-wrap {
+    border: none;
+    background: transparent;
+    overflow: visible;
+  }
+  .knowledge-document table {
+    min-width: 0;
+    border-collapse: separate;
+    border-spacing: 0 12px;
+  }
+  .knowledge-document thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .knowledge-document tbody,
+  .knowledge-document tr,
+  .knowledge-document td {
+    display: block;
+    width: 100%;
+  }
+  .knowledge-document tr {
+    overflow: hidden;
+    border: 1px solid #dbe3ee;
+    border-radius: 15px;
+    background: #ffffff !important;
+    box-shadow: 0 4px 16px rgba(15,23,42,.04);
+  }
+  .knowledge-document td {
+    border-right: none;
+    border-bottom: 1px solid #dbe3ee;
+    padding: 12px 14px;
+  }
+  .knowledge-document td:last-child {
+    border-bottom: none;
+  }
+  .knowledge-document td::before {
+    content: attr(data-label);
+    display: block;
+    color: #64748b;
+    font-weight: 800;
+    font-size: .78rem;
+    margin-bottom: 4px;
+  }
+  .knowledge-document tbody td:first-child {
+    background: #f8fafc;
+  }
 
   .legend-row {
     display: grid;
@@ -479,19 +748,18 @@ a:hover { text-decoration: underline; }
 <header class="site-header">
   <div class="header-inner">
     <h1>日常場面と支援をつなぐ</h1>
-    <p>どの場面で困っていますか？近い場面を選ぶと、まず整える条件と支援の一手が見られます。</p>
+    <nav class="nav-tabs" aria-label="表示の切り替え">
+      <button class="tab-btn" type="button" data-view="knowledge" aria-selected="true">基礎知識</button>
+      <button class="tab-btn" type="button" data-view="read" aria-selected="false">全体を見る</button>
+      <button class="tab-btn" type="button" data-view="explore" aria-selected="false">場面から探す</button>
+      <button class="tab-btn" type="button" data-view="plot" aria-selected="false">困り方から探す</button>
+      <button class="tab-btn" type="button" data-view="search" aria-selected="false">支援方法から探す</button>
+      <button class="tab-btn" type="button" data-view="filter" aria-selected="false">分類でしぼる</button>
+    </nav>
   </div>
 </header>
 <main class="app-shell">
-  <nav class="nav-tabs" aria-label="表示の切り替え">
-    <button class="tab-btn" type="button" data-view="explore" aria-selected="true">場面から探す</button>
-    <button class="tab-btn" type="button" data-view="plot" aria-selected="false">困り方から探す</button>
-    <button class="tab-btn" type="button" data-view="search" aria-selected="false">支援方法から探す</button>
-    <button class="tab-btn" type="button" data-view="filter" aria-selected="false">分類でしぼる</button>
-    <button class="tab-btn" type="button" data-view="read" aria-selected="false">全体を見る</button>
-  </nav>
-
-  <section id="view-explore" class="view active">
+  <section id="view-explore" class="view">
     <div class="legend-row">
       <div class="legend-card scene"><strong>場面</strong>支援現場で見えやすい具体的な出方です。</div>
       <div class="legend-card support"><strong>支援</strong>条件を整えるための関わり方や工夫です。</div>
@@ -567,6 +835,59 @@ a:hover { text-decoration: underline; }
         </aside>
         <section id="filterDetail" class="right-pane" aria-live="polite"></section>
       </div>
+    </div>
+  </section>
+
+  <section id="view-knowledge" class="view active">
+    <div class="knowledge-document" id="knowledge-top">
+<header class="hero">
+      <p class="kicker">橋渡し教材</p>
+      <h1>日常場面と対人支援をつなぐ</h1>
+      <p class="subtitle">日常場面の経験を、障害福祉の支援に翻訳するための橋渡し教材</p>
+      <aside class="callout callout-main"><p class="callout-label">中心メッセージ</p><p>対人支援とは、特別な人にだけ行う特殊な技術ではありません。人が思うように動きづらくなる条件を見つけ、動きやすくなるような条件へ組み替える、誰もが行っている日常的な営みです。ただし、精神障害・発達障害のある方の困難の強さを、支援者自身の一般的な感覚で過小評価してしまうことには注意が必要です。</p></aside>
+    </header>
+    <section id="purpose" class="content-section"><h2>この教材の目的</h2>
+<p>この教材は、利用者を固定的なタイプに分類するための表ではありません。支援者が、自分自身の日常場面や仕事の中にもある苦手や困難さを感じる場面を手がかりにして、障害福祉における対人支援を理解するための橋渡し教材です。</p>
+<p>一般企業で働いてきた人は、すでに多くの対人支援の原型を経験しています。段取りを分ける、情報を見える形にする、優先順位をつける、相談しやすくする、休憩後に作業へ戻る手順を決める、確認基準を決める。これらは、福祉現場で「対人支援」と呼ばれる営みと地続きです。</p>
+<p>障害福祉における対人支援の専門性とは、これらの日常的な工夫を、本人の特性・状態・感じ方・生活背景に合わせて、より丁寧に、継続的に、安全に配慮しながら設計することです。</p>
+<ul class="check-list"><li>支援者自身の日常場面・仕事場面へ当てはめて読む。</li><li>さまざまな場面について「自分にもある」と気づく。ただし「自分にもあるから同じ」とは見なさない。</li><li>障害のある方が感じる困難と自分自身との違いを、人格・意欲・甘えではなく、負担が強くなるライン、つらさの強さ、続きやすさ、戻りやすさ、生活への広がり、過去経験の積み重なりの違いとして見る。</li><li>対人支援は「本人を変える」ことだけではなく、刺激、情報、手順、時間、人との関わり方、確認基準、行動が継続しやすくなる条件を整えることでも進められることを知る。</li></ul>
+<p class="note-line">※安全上の懸念がある場合は、支援ではなく緊急対応が必要になります。</p>
+</section>
+<section id="continuity" class="content-section"><h2>日常場面と地続き。ただし、困難の強さは同じではない</h2>
+<p>この教材で扱う困りごとは、障害のある方だけに起こる特殊な現象ではありません。チャットやスマートフォンの通知が気になる、口頭指示を忘れる、大きな仕事で手が止まる、曖昧な指示に困る、人の目が気になる、疲れに気づくのが遅れる、といったことは誰にでも起こり得ます。</p>
+<p>しかし、精神障害・発達障害のある方の中には、感覚、注意、記憶、言葉の受け取り方、人との関わり、不安、身体感覚、疲労の受け取り方に、一般的な感覚とは異なる強い偏りや状態変動がある方がいます。そのため、支援者にとっては「少し気になる」「少し疲れる」で済む刺激や場面が、障害のある方にとっては作業停止、強い不安、混乱、フリーズ、回避、体調悪化、安全上のリスクにつながることがあります。</p>
+<aside class="callout callout-principle"><p class="callout-label">合言葉</p><p>障害のある方が困難を感じる原理は支援者の日常場面と根本は変わりません。しかし、負担の感じやすさは、障害の有無にかかわらず、その人ごとに違います。自分の経験は理解への入口になりますが、支援する相手の体験を測る物差しそのものにはなりません。</p></aside>
+<div class="table-wrap"><table class="data-table point-table"><thead><tr><th scope="col">場面を見るときのポイント</th><th scope="col">支援者の日常場面にもあること</th><th scope="col">障害福祉の対人支援で特に見ること</th></tr></thead><tbody><tr><td data-label="場面を見るときのポイント">反応が出始めるライン</td><td data-label="支援者の日常場面にもあること">疲れていると、チャットやスマートフォンの通知、周囲の音が気になり始める。</td><td data-label="障害福祉の対人支援で特に見ること">どのくらいの刺激、情報、予定変更で作業が止まるか。周囲には小さく見える刺激でも、本人には強く響くことがある。</td></tr><tr><td data-label="場面を見るときのポイント">つらさの強さ</td><td data-label="支援者の日常場面にもあること">苦手な場面では緊張や焦りが強くなる。</td><td data-label="障害福祉の対人支援で特に見ること">本人の中で、どれほどつらいこと、混乱すること、怖いこととして感じられているか。表情だけで判断しない。</td></tr><tr><td data-label="場面を見るときのポイント">続きやすさ</td><td data-label="支援者の日常場面にもあること">少し休めば戻れることがある。</td><td data-label="障害福祉の対人支援で特に見ること">調子が崩れた状態がどれくらい続くか。休憩後も作業へ戻れない、翌日に反動が出ることがある。</td></tr><tr><td data-label="場面を見るときのポイント">作業へ戻るための条件</td><td data-label="支援者の日常場面にもあること">気分転換や相談で戻れることがある。</td><td data-label="障害福祉の対人支援で特に見ること">何をすると落ち着いて作業へ戻りやすいか。声かけ・励まし・雑談が逆に戻りにくさにつながることもある。</td></tr><tr><td data-label="場面を見るときのポイント">生活への広がり</td><td data-label="支援者の日常場面にもあること">ひとつのミスでその日の仕事が進みにくくなる。</td><td data-label="障害福祉の対人支援で特に見ること">作業だけでなく、通所、睡眠、食事、人との関わり、自尊感情、安全へ広がるかを確認する。</td></tr><tr><td data-label="場面を見るときのポイント">過去経験の積み重なり</td><td data-label="支援者の日常場面にもあること">叱責経験がある仕事は避けたくなる。</td><td data-label="障害福祉の対人支援で特に見ること">過去の失敗、否定された経験、孤立、無理をして合わせ続けた経験が、今の場面を強く怖いものとして感じさせていないかを見る。</td></tr></tbody></table></div>
+</section>
+<section id="model" class="content-section"><h2>支援の基本モデル</h2>
+<p>支援者が見るのは、本人の「やる気」や「性格」だけではありません。次の流れで、その人の置かれた環境を読み取り、状況や条件と行動の関係を見ます。そして、どのような条件や環境を変えれば、別の流れを作ることができるかを考えます。</p>
+<div class="table-wrap"><table class="data-table model-table"><thead><tr><th scope="col">支援の段階</th><th scope="col">観察される例</th><th scope="col">支援者の問いの例</th></tr></thead><tbody><tr><td data-label="支援の段階">1. 情報や刺激の重なりがあるか</td><td data-label="観察される例">刺激、情報量、手順、時間、人との関わり、予定変更、先が読めない状況、体調などが重なる。</td><td data-label="支援者の問いの例">何が重なったときに、作業や相談が止まりやすいか。</td></tr><tr><td data-label="支援の段階">2. 注意・記憶・判断に使う力がどのように変化しているか</td><td data-label="観察される例">注意を向ける、覚えておく、判断する、言葉にする、気持ちを整えるための力が減る。</td><td data-label="支援者の問いの例">本人の中で、どの部分に一番力を使っているか。</td></tr><tr><td data-label="支援の段階">3. どのような身体反応・感情が強く出ているか</td><td data-label="観察される例">緊張、疲労、焦り、ざわつき、頭が真っ白になる、同じ考えがぐるぐるするなどが出る。</td><td data-label="支援者の問いの例">体や頭の中では何が起きているか。</td></tr><tr><td data-label="支援の段階">4. 停止・回避・確認など実際の行動はどのようになっているか</td><td data-label="観察される例">固まる、後回しにする、席を離れる、相談が遅れる、確認が増える、怒りが出る、無理に合わせ続けるなど。</td><td data-label="支援者の問いの例">その行動によって、本人は何を避けようとしているか。何が一時的に楽になっているか。</td></tr><tr><td data-label="支援の段階">5. 短期的にはどうなっているか</td><td data-label="観察される例">避けると一時的に不安が下がり、同じ動き方が続きやすくなる。</td><td data-label="支援者の問いの例">その場では楽になることと、あとで困りやすくなることの両方を見る。</td></tr><tr><td data-label="支援の段階">6. 条件や環境を変えて、別の流れを作れるか</td><td data-label="観察される例">小さな着手、失敗しても影響が小さい試し方、休憩後に作業へ戻る手順、できた行動を認めること、メモやチェックリストの活用で、戻れる経験を作る。</td><td data-label="支援者の問いの例">何を変えれば、本人が動きやすくなるか。</td></tr></tbody></table></div>
+</section>
+<section id="self-to-support" class="content-section"><h2>自分ごとから対人支援へ</h2>
+<div class="table-wrap"><table class="data-table step-table"><thead><tr><th scope="col">ステップ</th><th scope="col">支援者がすること</th><th scope="col">使う問い</th></tr></thead><tbody><tr><td data-label="ステップ">Step 1<br>自分自身の場面を思い出す</td><td data-label="支援者がすること">自分の日常や仕事で止まりやすい場面を思い出す。</td><td data-label="使う問い">自分はどんな場面で動きにくくなるか。メール、会議、締切、雑談、報告、家事など。</td></tr><tr><td data-label="ステップ">Step 2<br>あてはまりそうな場面を見る。</td><td data-label="支援者がすること">正解探しではなく、近い負担のパターンを1つか2つだけ仮置きする。</td><td data-label="使う問い">刺激、記憶、着手しにくさ、情報の多さ、予定変更、言葉の受け取り方、人との関わり、自分の状態への気づき、不安や回避、自立や強みの使い方のうち、どれが近いか。</td></tr><tr><td data-label="ステップ">Step 3<br>自分の工夫を思い浮かべる。</td><td data-label="支援者がすること">自分が自然にしている工夫はどんなものがあるかを思い浮かべる。</td><td data-label="使う問い">スマホの通知を切る、メモを取る、下書きにする、相談文を書く、休む、誰かに確認する、など。</td></tr><tr><td data-label="ステップ">Step 4<br>対人支援へ翻訳する</td><td data-label="支援者がすること">その工夫を、本人に押しつけず、本人にとってのつらさの強さなどに合わせて、対人支援の方法を考えてみる。</td><td data-label="使う問い">本人には、どの条件をどの程度整える必要があるか。本人は何を選べるか。安全上の心配はあるか。</td></tr></tbody></table></div>
+</section>
+<section id="emergency" class="content-section"><h2>緊急時の分け方：通常の対人支援と分ける</h2>
+<p>日常場面と対人支援は地続きですが、安全上の緊急課題は別の対応が必要です。</p>
+<div class="table-wrap"><table class="data-table emergency-table"><thead><tr><th scope="col">通常の対人支援から切り離すサイン</th><th scope="col">対応の原則</th></tr></thead><tbody><tr><td data-label="通常の対人支援から切り離すサイン">自傷（自分を傷つける）のおそれがある</td><td data-label="対応の原則">一人で判断しない。職員間で共有し、管理者・医療・相談機関等のフローにつなぐ。</td></tr><tr><td data-label="通常の対人支援から切り離すサイン">他害（他人を傷つける）のおそれがある、強い怒りで安全が脅かされる</td><td data-label="対応の原則">本人・周囲の安全確保を優先する。説得や反省を求めることは後回し。</td></tr><tr><td data-label="通常の対人支援から切り離すサイン">虐待や被害の申告がある</td><td data-label="対応の原則">記録・共有範囲・通報/相談フローを確認し、通常の振り返り記録だけで終わらせない。</td></tr><tr><td data-label="通常の対人支援から切り離すサイン">強い体調悪化、服薬・睡眠・食事の大きな悪化</td><td data-label="対応の原則">健康・医療・生活面の支援課題として扱う。必要に応じて家族・医療・関係機関へつなぐ。</td></tr><tr><td data-label="通常の対人支援から切り離すサイン">現実と考えを区別する力が大きく落ちている、急な混乱がある</td><td data-label="対応の原則">作業の促しより安全確認と環境調整を優先し、専門的な対応へつなぐ。</td></tr></tbody></table></div>
+<aside class="callout callout-warning"><p class="callout-label">注意</p><p>安全対応は、支援者が一人で抱え込まず、組織としての対応をとります。</p></aside>
+</section>
+<section id="phrases" class="content-section"><h2>声かけ変換表</h2>
+<p>支援者の声かけは、本人の負担を軽くする場合も、重くする場合もあります。原因追及よりも、条件・次の一手・作業へ戻る道筋を一緒に見る言い方に変換します。</p>
+<div class="table-wrap"><table class="data-table phrase-table"><thead><tr><th scope="col">避けたい言い方</th><th scope="col">変換後の言い方</th><th scope="col">ねらい</th></tr></thead><tbody><tr><td data-label="避けたい言い方">なぜできなかったのですか</td><td data-label="変換後の言い方">どのあたりで止まりましたか。止まった直前に何がありましたか。</td><td data-label="ねらい">人格評価ではなく、負担を強めている条件を見る。</td></tr><tr><td data-label="避けたい言い方">前も同じでしたよね</td><td data-label="変換後の言い方">今回は前回と同じ部分、違う部分はありますか。</td><td data-label="ねらい">パターン化しつつ、本人の学習機会を残す。</td></tr><tr><td data-label="避けたい言い方">ちゃんと考えてください</td><td data-label="変換後の言い方">書けるところだけ、まずは一つ一緒に考えてみましょう。</td><td data-label="ねらい">言葉にする負担を下げる。</td></tr><tr><td data-label="避けたい言い方">集中してください</td><td data-label="変換後の言い方">音・視界・作業単位など、どれを整えると良さそうですか。何か気になっていることがありますか。</td><td data-label="ねらい">集中力を求めるのではなく条件や環境を調整する。</td></tr><tr><td data-label="避けたい言い方">自分で管理してください</td><td data-label="変換後の言い方">今の状態は0から10で選ぶといくつですか。休憩条件を一つ決めましょう。</td><td data-label="ねらい">自分の状態を外から見える形にする。</td></tr><tr><td data-label="避けたい言い方">慣れるしかないです</td><td data-label="変換後の言い方">人との関わりで、距離、役割、伝え方、時間を変えるとしたら、どれが一番楽ですか。</td><td data-label="ねらい">人との関わりで生じる負担を、調整できる条件として扱う。</td></tr><tr><td data-label="避けたい言い方">大丈夫ですか</td><td data-label="変換後の言い方">今は、話す・書く・休むのうち、どれかできそうなものがありますか。</td><td data-label="ねらい">安心確認だけで終えず、次の行動を選ぶところへ移す。</td></tr><tr><td data-label="避けたい言い方">そんなに気にしなくていいです</td><td data-label="変換後の言い方">その刺激や言葉がどのくらい強く影響しているか、一緒に確認しましょう。</td><td data-label="ねらい">本人にとってのつらさの強さを小さく見積もらない。</td></tr></tbody></table></div>
+</section>
+<section id="translation" class="content-section"><h2>日常場面から対人支援への翻訳例</h2>
+<div class="table-wrap"><table class="data-table translation-table"><thead><tr><th scope="col">支援者の日常場面</th><th scope="col">そこで自然にしている工夫</th><th scope="col">利用者への対人支援としての翻訳</th></tr></thead><tbody><tr><td data-label="支援者の日常場面">会議後に決まったことを忘れないようにメモする。</td><td data-label="そこで自然にしている工夫">タスクをメモに残し、後で見返す。</td><td data-label="利用者への対人支援としての翻訳">口頭説明だけで終えず、次の行動を見える形に残す。</td></tr><tr><td data-label="支援者の日常場面">大きな資料作成は、まずタイトルだけ書く。</td><td data-label="そこで自然にしている工夫">最初のステップを小さくする。</td><td data-label="利用者への対人支援としての翻訳">課題を「3分でできるステップ」に分けて、着手できたことを認める。</td></tr><tr><td data-label="支援者の日常場面">PCの通知が多いときは集中時間を作る。</td><td data-label="そこで自然にしている工夫">PCの通知を切り、見る時間を決める。</td><td data-label="利用者への対人支援としての翻訳">席・PC通知・視界・作業単位を調整し、休憩後や中断後に作業へ戻るステップを決める。</td></tr><tr><td data-label="支援者の日常場面">上司への相談前に要点を3行で書く。</td><td data-label="そこで自然にしている工夫">相談の型を使う。</td><td data-label="利用者への対人支援としての翻訳">事実、今の状態、次の行動の3点で相談テンプレートを用意する。</td></tr><tr><td data-label="支援者の日常場面">締切前に完璧にしようとして出せないとき、下書きで見てもらう。</td><td data-label="そこで自然にしている工夫">失敗しても影響が小さい仮提出にする。</td><td data-label="利用者への対人支援としての翻訳">本番提出ではなく、下書き・仮提出・練習として扱い、出せたことをすぐ認める。</td></tr><tr><td data-label="支援者の日常場面">疲れているときは会議時間を短くする。</td><td data-label="そこで自然にしている工夫">上限を決める。</td><td data-label="利用者への対人支援としての翻訳">面談時間、確認回数、作業時間、人と関わる負担の上限を本人と決める。</td></tr></tbody></table></div>
+</section>
+<section id="good-bad" class="content-section"><h2>この教材の良い使い方・避けるべき使い方</h2>
+<div class="table-wrap"><table class="data-table use-table"><thead><tr><th scope="col">良い使い方</th><th scope="col">避けるべき使い方</th></tr></thead><tbody><tr><td data-label="良い使い方">支援者が自分の経験に当てはめ、対人支援を身近なものとして理解する。</td><td data-label="避けるべき使い方">利用者を固定的なタイプに分類し、「この人はこうだから」と決めつける。</td></tr><tr><td data-label="良い使い方">本人の困りごとを、刺激・情報・手順・人との関わり・行動が続きやすくなる条件の問題として見る。</td><td data-label="避けるべき使い方">困難を「甘え」「わがまま」「努力不足」と短絡する。</td></tr><tr><td data-label="良い使い方">自分にも似た経験があると気づき、同じ人間として条件を一緒に整える姿勢を作る。</td><td data-label="避けるべき使い方">「自分にもあるから同じ」「自分はできたから本人もできる」と考える。</td></tr><tr><td data-label="良い使い方">本人に確認しながら、小さな条件変更を試し、結果を見る。</td><td data-label="避けるべき使い方">支援者の経験や工夫を本人にそのまま押しつける。</td></tr><tr><td data-label="良い使い方">安全上のリスクは通常の対人支援から切り離し、緊急対応フローへつなぐ。</td><td data-label="避けるべき使い方">自傷や他人を傷つけるおそれ、虐待、強い体調悪化をワークや面談だけで処理しようとする。</td></tr></tbody></table></div>
+</section>
+<section id="closing" class="content-section"><h2>最後に：対人支援の専門性をどう捉えるか</h2>
+<p>利用者は「特殊な存在」だから対人支援が必要なのではありません。人は誰でも、条件によって動けなくなります。対人支援とは、その条件を観察し、整え、本人が少し動きやすくなる形に整える手助けをすることです。</p>
+<p>ただし、精神障害・発達障害のある方の困難は、一般的な感覚よりも強く、長く、広く影響することがあります。だからこそ、支援者が行っている日常場面での工夫をそのまま押しつけるのではなく、本人の感じ方、つらさの強さ、起こりやすさ、回復の難しさ、安全上の配慮に合わせて丁寧に設計します。</p>
+<aside class="callout callout-principle"><p class="callout-label">まとめ</p><p>対人支援は日常場面と地続きです。けれど、本人にとっての負担の強さを、自分の物差しで小さく見積もらないでください。自分自身の日常場面での工夫を、本人にとって役に立つ支援の材料として考えてみましょう。</p></aside>
+</section>
+    <a class="back-top" href="#knowledge-top">ページの先頭へ戻る</a>
+    <footer>このHTMLは、提供されたWord文書の内容をもとに作成しています。</footer>
     </div>
   </section>
 
@@ -1160,3 +1481,5 @@ init();
 </script>
 </body>
 </html>
+
+
