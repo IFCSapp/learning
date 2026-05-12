@@ -44,12 +44,12 @@ button, input, select { font: inherit; }
 button { cursor: pointer; }
 a { color: var(--primary); text-decoration: none; }
 a:hover { text-decoration: underline; }
-.site-header { background: #fff; border-bottom: 1px solid var(--border); }
-.header-inner { max-width: 1280px; margin: 0 auto; padding: 16px 20px 14px; display: grid; grid-template-columns: minmax(240px, max-content) minmax(0, 1fr); gap: 14px 24px; align-items: center; }
+.site-header { position: sticky; top: 0; z-index: 90; background: rgba(255, 255, 255, 0.96); border-bottom: 1px solid var(--border); backdrop-filter: blur(10px); }
+.header-inner { max-width: 1280px; margin: 0 auto; padding: 12px 20px; display: block; }
 .site-header h1 { margin: 0; font-size: clamp(1.35rem, 2.2vw, 1.9rem); line-height: 1.35; letter-spacing: 0; }
 .site-header p { margin: 0; color: var(--muted); max-width: 720px; font-size: 0.94rem; line-height: 1.65; }
 .app-shell { max-width: 1280px; margin: 0 auto; padding: 14px 20px 20px; }
-.nav-tabs { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; min-width: 0; }
+.nav-tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; min-width: 0; }
 .tab-btn { border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 999px; padding: 10px 16px; font-weight: 700; white-space: nowrap; }
 .tab-btn[aria-selected="true"] { background: var(--primary-soft); border-color: var(--primary-border); color: var(--primary); }
 .view { display: none; }
@@ -170,7 +170,7 @@ a:hover { text-decoration: underline; }
 .knowledge-document h1 {
   margin: 0 0 14px;
   color: #0f172a;
-  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-size: clamp(1.55rem, 3.2vw, 2.45rem);
   line-height: 1.25;
   letter-spacing: 0;
 }
@@ -487,9 +487,7 @@ a:hover { text-decoration: underline; }
   body { font-size: 16px; line-height: 1.68; background: #f5f7f8; }
   body.mobile-detail-open { overflow: hidden; }
 
-  .site-header { background: rgba(255,255,255,0.96); }
-  .header-inner { display: block; padding: 12px 14px 10px; }
-  .site-header h1 { font-size: 1.18rem; line-height: 1.35; margin-bottom: 6px; }
+  .header-inner { padding: 8px 14px; }
   .app-shell { padding: 12px; max-width: 100%; }
 
   .nav-tabs {
@@ -497,9 +495,8 @@ a:hover { text-decoration: underline; }
     gap: 8px;
     overflow-x: auto;
     justify-content: flex-start;
-    margin: 8px -14px 0;
-    padding: 8px 14px 2px;
-    border-top: 1px solid var(--border-soft);
+    margin: 0 -14px;
+    padding: 2px 14px;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
@@ -508,7 +505,6 @@ a:hover { text-decoration: underline; }
   .tag-filter-wrap::-webkit-scrollbar,
   .area-filter-chips::-webkit-scrollbar { display: none; }
   .tab-btn { flex: 0 0 auto; min-height: 42px; padding: 9px 14px; font-size: 0.92rem; box-shadow: 0 1px 2px rgba(15,23,42,0.04); }
-
   .knowledge-document {
     margin: 0 -12px;
     padding: 12px 12px 40px;
@@ -747,7 +743,6 @@ a:hover { text-decoration: underline; }
 <body>
 <header class="site-header">
   <div class="header-inner">
-    <h1>日常場面と支援をつなぐ</h1>
     <nav class="nav-tabs" aria-label="表示の切り替え">
       <button class="tab-btn" type="button" data-view="knowledge" aria-selected="true">基礎知識</button>
       <button class="tab-btn" type="button" data-view="read" aria-selected="false">全体を見る</button>
@@ -846,6 +841,12 @@ a:hover { text-decoration: underline; }
       <p class="subtitle">日常場面の経験を、障害福祉の支援に翻訳するための橋渡し教材</p>
       <aside class="callout callout-main"><p class="callout-label">中心メッセージ</p><p>対人支援とは、特別な人にだけ行う特殊な技術ではありません。人が思うように動きづらくなる条件を見つけ、動きやすくなるような条件へ組み替える、誰もが行っている日常的な営みです。ただし、精神障害・発達障害のある方の困難の強さを、支援者自身の一般的な感覚で過小評価してしまうことには注意が必要です。</p></aside>
     </header>
+    <section id="introduction" class="content-section"><h2>はじめに</h2>
+<p>この教材は、支援者自身が日常で感じることや経験する場面を手がかりに、支援の組み立て方を考えるための教材です。</p>
+<p>障害名や診断名だけで利用者を理解するのではなく、どの場面で、何が影響して、どのように動きづらくなっているのかを見ていきます。そのうえで、刺激、情報量、手順、時間、相談方法、環境、休憩、回復などの条件を整え、本人が次の行動に移りやすくなる支援を考えます。</p>
+<p>ここで扱う困りごとは、誰にでも起こりうる日常のつまずきと地続きです。ただし、困難の強さ、続きやすさ、生活への影響、作業へ戻る難しさは人によって大きく異なります。「自分にもあるから同じ」と考えるのではなく、本人にとってどの程度の困難になっているかを丁寧に見ることを大切にします。</p>
+<p>この教材は、本人を責めたり、努力不足を探したりするためのものではありません。職員が、目の前の行動を「本人の問題」として片づけず、支援で変えられる条件を見つけるために使います。</p>
+</section>
     <section id="purpose" class="content-section"><h2>この教材の目的</h2>
 <p>この教材は、利用者を固定的なタイプに分類するための表ではありません。支援者が、自分自身の日常場面や仕事の中にもある苦手や困難さを感じる場面を手がかりにして、障害福祉における対人支援を理解するための橋渡し教材です。</p>
 <p>一般企業で働いてきた人は、すでに多くの対人支援の原型を経験しています。段取りを分ける、情報を見える形にする、優先順位をつける、相談しやすくする、休憩後に作業へ戻る手順を決める、確認基準を決める。これらは、福祉現場で「対人支援」と呼ばれる営みと地続きです。</p>
@@ -887,7 +888,6 @@ a:hover { text-decoration: underline; }
 <aside class="callout callout-principle"><p class="callout-label">まとめ</p><p>対人支援は日常場面と地続きです。けれど、本人にとっての負担の強さを、自分の物差しで小さく見積もらないでください。自分自身の日常場面での工夫を、本人にとって役に立つ支援の材料として考えてみましょう。</p></aside>
 </section>
     <a class="back-top" href="#knowledge-top">ページの先頭へ戻る</a>
-    <footer>このHTMLは、提供されたWord文書の内容をもとに作成しています。</footer>
     </div>
   </section>
 
@@ -896,7 +896,6 @@ a:hover { text-decoration: underline; }
     <div id="readingContent"></div>
   </section>
 
-  <div class="footer">単一HTML版。外部通信は行いません。</div>
 </main>
 <div id="plotModalBackdrop" class="plot-modal-backdrop" aria-hidden="true">
   <div class="plot-modal" role="dialog" aria-modal="true" aria-labelledby="plotModalTitle">
