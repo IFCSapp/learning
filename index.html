@@ -348,6 +348,14 @@ a:hover { text-decoration: underline; }
 .cg-block h3 { margin: 0 0 6px; font-size: 0.96rem; }
 .cg-block p { margin: 0; }
 .split-lines p { margin: 0 0 8px; }
+.gallery-section .section-note { color: var(--muted); margin: 0 0 16px; }
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: 12px; }
+.gallery-card { border: 1px solid var(--border-soft); background: #fff; border-radius: 12px; overflow: hidden; }
+.gallery-image-button { display: block; width: 100%; border: 0; padding: 0; background: #eef2f6; }
+.gallery-image-button img { display: block; width: 100%; aspect-ratio: 16 / 9; height: auto; object-fit: cover; }
+.gallery-image-button:hover img { filter: brightness(0.97); }
+.gallery-card-body { padding: 10px 11px 12px; }
+.gallery-title { display: block; margin-top: 7px; font-size: 0.92rem; line-height: 1.45; font-weight: 800; }
 .scene-table { display: grid; gap: 10px; }
 .scene-row { border: 1px solid var(--border-soft); background: #fff; border-radius: 14px; padding: 14px; }
 .scene-row h3 { margin: 0 0 8px; font-size: 1.05rem; }
@@ -649,6 +657,8 @@ a:hover { text-decoration: underline; }
   .area-help { padding: 0 12px 12px; font-size: 0.86rem; line-height: 1.6; }
 
   .reading-section .section-note { font-size: 0.9rem; line-height: 1.6; }
+  .gallery-section .section-note { font-size: 0.9rem; line-height: 1.6; }
+  .gallery-grid { grid-template-columns: 1fr; }
   .cg-article { padding: 12px; margin-bottom: 12px; border-radius: 14px; }
   .cg-article-head { margin-bottom: 10px; }
   .cg-article-head h2 { font-size: 1.08rem; line-height: 1.45; }
@@ -686,7 +696,8 @@ a:hover { text-decoration: underline; }
   <div class="header-inner">
     <nav class="nav-tabs" aria-label="表示の切り替え">
       <button class="tab-btn" type="button" data-view="knowledge" aria-selected="true">基礎知識</button>
-      <button class="tab-btn" type="button" data-view="read" aria-selected="false">全体を見る</button>
+      <button class="tab-btn" type="button" data-view="gallery" aria-selected="false">一覧を見る</button>
+      <button class="tab-btn" type="button" data-view="read" aria-selected="false">詳細を見る</button>
       <button class="tab-btn" type="button" data-view="explore" aria-selected="false">場面から探す</button>
       <button class="tab-btn" type="button" data-view="plot" aria-selected="false">困り方から探す</button>
       <button class="tab-btn" type="button" data-view="search" aria-selected="false">支援方法から探す</button>
@@ -832,6 +843,11 @@ a:hover { text-decoration: underline; }
     <div id="readingContent"></div>
   </section>
 
+  <section id="view-gallery" class="view gallery-section">
+    <p class="section-note">場面画像だけを一覧します。画像をクリックすると大きく確認できます。</p>
+    <div id="galleryGrid" class="gallery-grid"></div>
+  </section>
+
 </main>
 <div id="plotModalBackdrop" class="plot-modal-backdrop" aria-hidden="true">
   <div class="plot-modal" role="dialog" aria-modal="true" aria-labelledby="plotModalTitle">
@@ -943,7 +959,7 @@ const els = {
   plotAreaChips: $('plotAreaChips'), areaMap: $('areaMap'), plotCount: $('plotCount'), plotModalBackdrop: $('plotModalBackdrop'), plotModalContent: $('plotModalContent'), plotModalClose: $('plotModalClose'),
   imageModalBackdrop: $('imageModalBackdrop'), imageModalContent: $('imageModalContent'), imageModalClose: $('imageModalClose'),
   globalCg: $('globalCg'), clearGlobalCg: $('clearGlobalCg'), filterList: $('filterList'), filterCount: $('filterCount'), filterDetail: $('filterDetail'),
-  readingContent: $('readingContent')
+  readingContent: $('readingContent'), galleryGrid: $('galleryGrid')
 };
 function escapeHTML(s) { return String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 function formatCodeAfterText(s) {
@@ -1181,7 +1197,6 @@ function sceneImageHTML(item) {
   if(!src) return '';
   return `<figure class="scene-visual">
     <img src="${escapeHTML(src)}" alt="${escapeHTML(item.title)}の場面イラスト" loading="lazy" width="768" height="432">
-    <figcaption><span>${escapeHTML(item.id)} の場面画像</span><button type="button" class="image-open-btn" data-image-src="${escapeHTML(src)}" data-image-title="${escapeHTML(item.title)}">開く</button></figcaption>
   </figure>`;
 }
 function sceneImageCompactHTML(item) {
@@ -1196,6 +1211,19 @@ function sceneThumbHTML(item) {
   const src = SCENE_IMAGES[item?.id];
   if(!src) return '<span class="scene-thumb empty">画像なし</span>';
   return `<span class="scene-thumb"><img src="${escapeHTML(src)}" alt="" loading="lazy" width="160" height="90"></span>`;
+}
+function sceneGalleryCardHTML(item) {
+  const src = SCENE_IMAGES[item?.id];
+  if(!src) return '';
+  return `<article class="gallery-card">
+    <button class="gallery-image-button" type="button" data-image-src="${escapeHTML(src)}" data-image-title="${escapeHTML(item.id)} ${escapeHTML(item.title)}">
+      <img src="${escapeHTML(src)}" alt="${escapeHTML(item.title)}の場面イラスト" loading="lazy" width="768" height="432">
+    </button>
+    <div class="gallery-card-body">
+      <div class="scene-item-meta"><span class="cg-badge">${escapeHTML(item.cg)}</span><span class="cg-badge">${escapeHTML(item.id)}</span></div>
+      <span class="gallery-title">${escapeHTML(item.title)}</span>
+    </div>
+  </article>`;
 }
 function detailHTML(item) {
   if(!item) return '<div class="empty-state">左の場面を選ぶと、ここに説明が表示されます。</div>';
@@ -1260,6 +1288,10 @@ function renderFilter() {
   els.filterCount.textContent = `${items.length}件の場面`;
   els.filterList.innerHTML = groupedListHTML(items, state.filterSelected, 'filter');
   els.filterDetail.innerHTML = detailHTML(findItem(state.filterSelected));
+}
+function renderGallery() {
+  if(!els.galleryGrid) return;
+  els.galleryGrid.innerHTML = DATA.items.map(sceneGalleryCardHTML).join('');
 }
 function renderReading() {
   els.readingContent.innerHTML = DATA.cgs.map(cg => {
@@ -1406,6 +1438,7 @@ function init() {
   els.imageModalBackdrop.addEventListener('click', e => { if(e.target === els.imageModalBackdrop) closeImageModal(); });
   document.addEventListener('keydown', e => { if(e.key === 'Escape') { closePlotModal(); closeImageModal(); closeMobileDetail(); } });
   window.addEventListener('resize', () => { if(!isMobileLayout()) closeMobileDetail(); });
+  renderGallery();
   renderReading();
   renderExplore();
   renderSearch();

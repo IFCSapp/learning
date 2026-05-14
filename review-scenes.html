@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CS001-CS064 場面画像確認</title>
+<style>
+:root {
+  --bg: #f6f7f9;
+  --surface: #fff;
+  --text: #1f2933;
+  --muted: #667085;
+  --border: #d9e1e8;
+  --soft: #eef3f7;
+  --primary: #0f766e;
+  --primary-soft: #e6f4f1;
+  --primary-border: #9ed4ca;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.65;
+}
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: rgba(255,255,255,.96);
+  border-bottom: 1px solid var(--border);
+}
+.header-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 14px 20px;
+  display: grid;
+  gap: 12px;
+}
+.top-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+}
+h1 { margin: 0; font-size: 1.35rem; line-height: 1.35; }
+.meta { color: var(--muted); font-size: .9rem; }
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+.tab {
+  min-height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--text);
+  padding: 8px 14px;
+  font-weight: 800;
+}
+.tab[aria-selected="true"] {
+  color: var(--primary);
+  background: var(--primary-soft);
+  border-color: var(--primary-border);
+}
+.controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+input, select {
+  min-height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  padding: 8px 10px;
+}
+input { width: min(360px, 48vw); }
+main {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 18px 20px 28px;
+}
+.status {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-weight: 700;
+}
+.view { display: none; }
+.view.active { display: block; }
+.list-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+  gap: 12px;
+}
+.list-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.image-button {
+  display: block;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  background: var(--soft);
+}
+.image-button img,
+.card img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  object-fit: cover;
+  background: var(--soft);
+}
+.image-button:hover img { filter: brightness(.97); }
+.list-body { padding: 10px 11px 12px; }
+.list-title {
+  display: block;
+  margin-top: 6px;
+  font-weight: 800;
+  font-size: .92rem;
+  line-height: 1.45;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr));
+  gap: 14px;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.card img { border-bottom: 1px solid var(--border); }
+.body { padding: 13px 14px 15px; }
+.eyebrow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 7px;
+  color: var(--muted);
+  font-size: .78rem;
+  font-weight: 800;
+}
+.badge {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px 8px;
+  background: #f9fafb;
+}
+h2 {
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+  line-height: 1.45;
+}
+.block {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--soft);
+}
+.block strong {
+  display: block;
+  color: var(--primary);
+  font-size: .83rem;
+  margin-bottom: 3px;
+}
+.block p { margin: 0; font-size: .92rem; }
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 10px;
+}
+.tag {
+  color: var(--muted);
+  background: #f7f9fb;
+  border: 1px solid var(--soft);
+  border-radius: 999px;
+  padding: 2px 7px;
+  font-size: .76rem;
+}
+.empty {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px;
+}
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, .48);
+}
+.modal-backdrop.is-open { display: flex; }
+.modal {
+  width: min(1120px, 96vw);
+  max-height: min(90vh, 900px);
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 22px 70px rgba(15, 23, 42, .28);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.modal-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.modal-title { color: var(--muted); font-weight: 800; }
+.modal-close {
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 999px;
+  padding: 7px 11px;
+  font-weight: 800;
+}
+.modal-body { overflow: auto; background: #f8fafc; }
+.modal-body img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 80vh;
+  object-fit: contain;
+}
+@media (max-width: 760px) {
+  .top-row { grid-template-columns: 1fr; }
+  .controls { justify-content: stretch; }
+  input, select { width: 100%; }
+  main { padding: 14px 12px 22px; }
+  .grid { grid-template-columns: 1fr; }
+  .modal-backdrop { align-items: flex-end; padding: 0; }
+  .modal { width: 100%; border-radius: 12px 12px 0 0; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <div class="top-row">
+      <div>
+        <h1>CS001-CS064 場面画像確認</h1>
+        <div class="meta">ローカルサーバー不要。HTMLファイルを直接開いて確認できます。</div>
+      </div>
+      <div class="controls">
+        <input id="query" type="search" placeholder="ID・見出し・詳細で検索">
+        <select id="cgFilter" aria-label="CGで絞り込み">
+          <option value="all">すべてのCG</option>
+        </select>
+      </div>
+    </div>
+    <nav class="tabs" aria-label="表示の切り替え">
+      <button class="tab" type="button" data-view="list" aria-selected="true">一覧を見る</button>
+      <button class="tab" type="button" data-view="detail" aria-selected="false">詳細を見る</button>
+    </nav>
+  </div>
+</header>
+<main>
+  <p id="status" class="status"></p>
+  <section id="view-list" class="view active">
+    <div id="listGrid" class="list-grid"></div>
+  </section>
+  <section id="view-detail" class="view">
+    <div id="detailGrid" class="grid"></div>
+  </section>
+</main>
+<div id="imageModal" class="modal-backdrop" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="imageModalTitle">
+    <div class="modal-bar">
+      <div id="imageModalTitle" class="modal-title">場面イメージ</div>
+      <button id="imageModalClose" class="modal-close" type="button">閉じる</button>
+    </div>
+    <div id="imageModalBody" class="modal-body"></div>
+  </div>
+</div>
+<script>
+const SCENES = [{"id":"CS001","title":"外部刺激に注意が引かれやすい","cg":"CG01","cgTitle":"音や光、人の動きなどで集中がそれやすい","visible":"周囲の音、人の動き、チャットやスマートフォンの通知、ドアの開閉が気になり、作業の手が止まる。作業に戻りたいと思っていても、気になる状態が続き、元の作業へ戻るまで時間がかかる。","methods":"刺激を下げる、時間を区切る、見る場所を指定する、環境を調整する","strength":"周囲の変化に気づきやすく、危険やミスの兆候を拾いやすい面があります。見守り、検品、状況確認では強みになることがあります。","tags":["刺激・環境","注意・集中","不安・回避","自立・強み"],"image":"assets/scenes/cs001.webp"},{"id":"CS002","title":"集中が短いスパンで波打つ","cg":"CG01","cgTitle":"音や光、人の動きなどで集中がそれやすい","visible":"最初の10分は作業が進むが、時間が長くなるとミス、離席、別作業、眠気が増える。","methods":"時間を区切る、休憩と回復を設計する、進み具合を見える形にする、ここまでにする線を決める","strength":"短い区切りでは集中力が高く、短時間で成果を出せることがあります。","tags":["刺激・環境","注意・集中","疲労・身体","自立・強み"],"image":"assets/scenes/cs002.webp"},{"id":"CS003","title":"一度それた注意を元の作業へ戻しにくい","cg":"CG01","cgTitle":"音や光、人の動きなどで集中がそれやすい","visible":"声をかけられた後、チャットの通知を確認した後、別作業を挟んだ後などに、元の作業へ注意を戻すまで時間がかかる。","methods":"手順を見える形にする、進み具合を見える形にする、作業や相談を再開する手順を決める","strength":"一つの作業に深く入る力があります。割り込みが少ない環境では安定しやすくなります。","tags":["刺激・環境","注意・集中","言葉・相談"],"image":"assets/scenes/cs003.webp"},{"id":"CS004","title":"一つずつなら問題ないが同時に複数のことをすると抜けが出やすい","cg":"CG01","cgTitle":"音や光、人の動きなどで集中がそれやすい","visible":"聞きながらメモを取る、話しながら画面を操作する、作業しながら確認するなどの場面で、聞き漏れや操作漏れが出る。","methods":"情報量を絞る、手順を見える形にする、時間を区切る","strength":"一つずつ進める条件が整うと、精度が上がり、丁寧に作業できることがあります。","tags":["刺激・環境","注意・集中","情報量・速度","不安・回避"],"image":"assets/scenes/cs004.webp"},{"id":"CS005","title":"細部に時間をかけ、全体が進まない","cg":"CG01","cgTitle":"音や光、人の動きなどで集中がそれやすい","visible":"文字揃え、色、言い回し、1か所の誤りなど細部の修正に時間を使い、資料や課題全体の提出・完了が遅れる。","methods":"確認が終わったと判断する目安を作る、優先順位ラベルを付ける、ここまでにする線を決める、強みを役割に配分する","strength":"細部の違和感やミスを見つける力があります。品質確認や校正では強みになることがあります。","tags":["刺激・環境","注意・集中","開始・段取り","不安・回避","自立・強み"],"image":"assets/scenes/cs005.webp"},{"id":"CS006","title":"人の気配が気になり、警戒や疲れにつながりやすい","cg":"CG01","cgTitle":"音や光、人の動きなどで集中がそれやすい","visible":"背後を通られる、見られている気がする、職員の表情が気になるなどの条件で、作業への集中が難しい。","methods":"刺激を下げる、環境を調整する、口頭以外の伝え方を認める、事実・解釈・感情を分ける","strength":"相手の変化に気づきやすく、接客やチーム調整で活きることがあります。","tags":["刺激・環境","注意・集中","対人・視線","疲労・身体"],"image":"assets/scenes/cs006.webp"},{"id":"CS007","title":"口頭指示を覚えておくのが苦手","cg":"CG02","cgTitle":"言われたことや次の行動を覚えながら進めるのが大変","visible":"説明直後は分かったように見えるが、数分後に指示内容の一部を思い出しにくい。複数手順の途中だけを実行することがある。","methods":"手順を見える形にする、相談・報告テンプレートを使う、自己管理ツールに移す","strength":"手順が見える形になると、安定して正確に進められることがあります。","tags":["記憶・予定","情報量・速度","言葉・相談"],"image":"assets/scenes/cs007.webp"},{"id":"CS008","title":"条件付き指示の一部が抜ける","cg":"CG02","cgTitle":"言われたことや次の行動を覚えながら進めるのが大変","visible":"「AをしてからB。ただしCは除く」のような条件で、例外や順番が抜けたり、間違えたりする。","methods":"情報量を絞る、手順を見える形にする、見る場所を指定する、優先順位ラベルを付ける","strength":"条件が明文化されると、ルールに沿って慎重に進められます。","tags":["記憶・予定","刺激・環境","開始・段取り","情報量・速度","変更・例外"],"image":"assets/scenes/cs008.webp"},{"id":"CS009","title":"次の予定や次の行動を覚えておくのが苦手","cg":"CG02","cgTitle":"言われたことや次の行動を覚えながら進めるのが大変","visible":"今日の予定、次の面談、提出期限、次に誰へ報告するかなどを、必要なタイミングで思い出すのが苦手。","methods":"見通しを先に出す、進み具合を見える形にする、自己管理ツールに移す","strength":"予定が見える形になると、切り替えの不安が下がり、安定しやすくなります。","tags":["情報量・速度","記憶・予定","言葉・相談","不安・回避","自立・強み"],"image":"assets/scenes/cs009.webp"},{"id":"CS010","title":"作業中に目的や終わりの目安を失いやすい","cg":"CG02","cgTitle":"言われたことや次の行動を覚えながら進めるのが大変","visible":"作業を始めた時点では目的が分かっているが、途中で何を完成させるのか分からなくなる。","methods":"手順を見える形にする、見る場所を指定する、進み具合を見える形にする","strength":"完了形が見えると、自分で進められる範囲が増えます。","tags":["情報量・速度","刺激・環境","記憶・予定","開始・段取り"],"image":"assets/scenes/cs010.webp"},{"id":"CS011","title":"用語・人名・略語を覚えにくい","cg":"CG02","cgTitle":"言われたことや次の行動を覚えながら進めるのが大変","visible":"人名、担当名、制度名、アプリ名、略語が思い出せず、質問や報告に支障が出る。","methods":"手順を見える形にする、自己管理ツールに移す","strength":"意味や関係を理解すると、用語表を使って正確に扱えることがあります。","tags":["情報量・速度","記憶・予定","言葉・相談"],"image":"assets/scenes/cs011.webp"},{"id":"CS012","title":"タスクを思い出しにくい","cg":"CG02","cgTitle":"言われたことや次の行動を覚えながら進めるのが大変","visible":"「後で報告する」「帰る前に提出する」「明日持ってくる」と予定していた行動を、必要なタイミングで思い出しにくい。","methods":"見通しを先に出す、進み具合を見える形にする、自己管理ツールに移す","strength":"行動のきっかけが決まると、自分で動けることがあります。","tags":["情報量・速度","記憶・予定","開始・段取り","言葉・相談"],"image":"assets/scenes/cs012.webp"},{"id":"CS013","title":"開始のスイッチが入りにくい","cg":"CG03","cgTitle":"何から始めるか、どの順番で進めるかが決まりにくい","visible":"準備まではできるが、ファイルを開く、1文字入力する、声をかけるなどの一手目が出にくい。","methods":"最初の一手を小さくする、できた行動をすぐ認めて続けやすくする、失敗しても影響が小さい試し方にする、「自分にもできる」という感覚を再学習する","strength":"始まると集中が続く場合があります。開始だけを支えると、自分で進めやすくなります。","tags":["刺激・環境","注意・集中","開始・段取り","不安・回避","自立・強み"],"image":"assets/scenes/cs013.webp"},{"id":"CS014","title":"順番を組み立てるのに時間がかかる","cg":"CG03","cgTitle":"何から始めるか、どの順番で進めるかが決まりにくい","visible":"やること自体は分かっているが、最初に何をするか、どの順番で進めるかを決めるのに時間がかかる。","methods":"手順を見える形にする、選択肢を2つにする、優先順位ラベルを付ける、進み具合を見える形にする","strength":"順番が決まると、淡々と実行できることがあります。","tags":["不安・回避","開始・段取り"],"image":"assets/scenes/cs014.webp"},{"id":"CS015","title":"優先順位をつけることが難しい","cg":"CG03","cgTitle":"何から始めるか、どの順番で進めるかが決まりにくい","visible":"重要でない細部を先に進め、締切が近い作業より、目についた作業を先にする。","methods":"優先順位ラベルを付ける、進み具合を見える形にする、強みを役割に配分する","strength":"基準が明確なら、ルールに沿って安定して進められます。","tags":["不安・回避","注意・集中","開始・段取り","自立・強み"],"image":"assets/scenes/cs015.webp"},{"id":"CS016","title":"終わりの目安がないと終われない","cg":"CG03","cgTitle":"何から始めるか、どの順番で進めるかが決まりにくい","visible":"いつまでも直し続ける、提出できない、確認を続けることがある。逆に、完了の判断が早すぎる場合もある。","methods":"確認が終わったと判断する目安を作る、優先順位ラベルを付ける、ここまでにする線を決める","strength":"基準が明確なら、丁寧さや責任感が成果につながります。","tags":["記憶・予定","開始・段取り","不安・回避"],"image":"assets/scenes/cs016.webp"},{"id":"CS017","title":"ミス後にどう修正すれば良いかの計画を立てにくい","cg":"CG03","cgTitle":"何から始めるか、どの順番で進めるかが決まりにくい","visible":"ミスに気づくと、作業が止まる、ミスを隠す、全部やり直そうとする、強く落ち込むことがある。","methods":"エラー修正手順を作る、事実・解釈・感情を分ける、作業や相談を再開する手順を決める","strength":"修正手順が形になると、自己修正力が伸びやすくなります。","tags":["不安・回避","開始・段取り","言葉・相談","疲労・身体"],"image":"assets/scenes/cs017.webp"},{"id":"CS018","title":"時間見積もりがずれやすい","cg":"CG03","cgTitle":"何から始めるか、どの順番で進めるかが決まりにくい","visible":"作業が5分で終わると思っていても、実際には30分かかる。余裕があると思っていても、締切直前になる。","methods":"時間を区切る、見通しを先に出す、進み具合を見える形にする、自己管理ツールに移す","strength":"実際にかかった時間の記録があると、現実的な計画を作れるようになります。","tags":["不安・回避","開始・段取り"],"image":"assets/scenes/cs018.webp"},{"id":"CS019","title":"一度覚えた手順を変更しにくい","cg":"CG05","cgTitle":"変更や例外があると、次の動きが組み立てにくい","visible":"前回のやり方にこだわることがある。新しい手順や効率化を示されると、手が止まる、気持ちが不安定になる。","methods":"変更点を分けて示す、見通しを先に出す、失敗しても影響が小さい試し方にする","strength":"決まった流れの作業では安定し、正確に続けられます。","tags":["記憶・予定","変更・例外","不安・回避","自立・強み"],"image":"assets/scenes/cs019.webp"},{"id":"CS020","title":"予定変更が難しい","cg":"CG05","cgTitle":"変更や例外があると、次の動きが組み立てにくい","visible":"急な面談変更、作業順変更、担当変更があると、固まる、怒る、欠席したくなる。","methods":"変更点を分けて示す、見通しを先に出す、作業や相談を再開する手順を決める","strength":"予定が安定すると、準備力を発揮しやすくなります。","tags":["刺激・環境","記憶・予定","変更・例外","言葉・相談","不安・回避"],"image":"assets/scenes/cs020.webp"},{"id":"CS021","title":"例外に弱い","cg":"CG05","cgTitle":"変更や例外があると、次の動きが組み立てにくい","visible":"通常ルールでは進められるが、「今回は例外」「急ぎなら別対応」のような条件が出ると判断が難しくなる。","methods":"相談・報告テンプレートを使う、変更点を分けて示す、優先順位ラベルを付ける","strength":"通常ルールの正確な運用は得意になりやすいです。","tags":["不安・回避","開始・段取り","変更・例外","言葉・相談"],"image":"assets/scenes/cs021.webp"},{"id":"CS022","title":"別案や相手の見方を受け入れるまでに時間がかかる","cg":"CG05","cgTitle":"変更や例外があると、次の動きが組み立てにくい","visible":"一つの考えから離れるのが難しい、別のやり方や相手の見方を受け入れるまでに時間がかかる。","methods":"選択肢を2つにする、優先順位ラベルを付ける、事実・解釈・感情を分ける","strength":"一貫性があり、方針を守る力として働くことがあります。","tags":["不安・回避","開始・段取り","変更・例外","対人・視線","疲労・身体"],"image":"assets/scenes/cs022.webp"},{"id":"CS023","title":"訓練ではできても他の場面での実践が難しい","cg":"CG05","cgTitle":"変更や例外があると、次の動きが組み立てにくい","visible":"事業所内では練習した行動ができるが、実習先、家庭、面接、別担当者の場面では同じ行動が難しい。","methods":"変更点を分けて示す、見通しを先に出す、自己管理ツールに移す、必要な配慮の伝え方を練習する","strength":"同じ条件が整えば安定しやすく、練習の型を活用できます。","tags":["不安・回避","変更・例外"],"image":"assets/scenes/cs023.webp"},{"id":"CS024","title":"先が見通せないと確認や先延ばしが増えやすい","cg":"CG05","cgTitle":"変更や例外があると、次の動きが組み立てにくい","visible":"結果が分からない、相手の反応が読めない、正解がない場面などで、確認、先延ばし、その場を避ける行動が増える。","methods":"確認が終わったと判断する目安を作る、見通しを先に出す、失敗しても影響が小さい試し方にする、頭に浮かぶ言葉を「頭の中の通知」として扱う","strength":"危険や失敗の可能性に慎重で、事前準備や品質管理に向くことがあります。","tags":["変更・例外","言葉・相談","対人・視線","不安・回避"],"image":"assets/scenes/cs024.webp"},{"id":"CS025","title":"作業テンポが速いと聞き漏れや手が止まることが増える","cg":"CG04","cgTitle":"情報が多い場面や速い流れについていきにくい","visible":"説明や作業ペースが速いと、聞き漏れ、入力ミス、固まる反応が増える。","methods":"情報量を絞る、時間を区切る、ここまでにする線を決める","strength":"ゆっくり進められる条件では正確性が高く、丁寧な確認に向くことがあります。","tags":["注意・集中","情報量・速度","不安・回避"],"image":"assets/scenes/cs025.webp"},{"id":"CS026","title":"情報量が多いと後半が抜ける","cg":"CG04","cgTitle":"情報が多い場面や速い流れについていきにくい","visible":"長い説明、長文資料、複数テーマの面談などで、後半の内容が頭に残りにくい。","methods":"情報量を絞る、手順を見える形にする、進み具合を見える形にする","strength":"情報が整理されると、理解を保ちやすくなります。","tags":["注意・集中","情報量・速度"],"image":"assets/scenes/cs026.webp"},{"id":"CS027","title":"長文や様式で止まりやすい","cg":"CG04","cgTitle":"情報が多い場面や速い流れについていきにくい","visible":"申請書、求人票、手順書、長いメール、入力フォームを見るだけで、読み始めや入力が止まることがある。","methods":"情報量を絞る、見る場所を指定する、自己管理ツールに移す","strength":"大事な点が整理されると、内容理解や判断ができることがあります。","tags":["注意・集中","刺激・環境","情報量・速度"],"image":"assets/scenes/cs027.webp"},{"id":"CS028","title":"質問に即答するのが難しい","cg":"CG04","cgTitle":"情報が多い場面や速い流れについていきにくい","visible":"質問されると黙る、返事が遅れる、後になって答えが思い浮かぶことがある。面談後に言いたいことが出ることもある。","methods":"選択肢を2つにする、状態を選択式で確認する、口頭以外の伝え方を認める","strength":"考える時間があれば、深く整理した返答ができることがあります。","tags":["注意・集中","情報量・速度","言葉・相談","不安・回避"],"image":"assets/scenes/cs028.webp"},{"id":"CS029","title":"図表や画面から必要な情報を探すのが苦手","cg":"CG04","cgTitle":"情報が多い場面や速い流れについていきにくい","visible":"表の行列、メニュー、タブ、複数ウィンドウ、求人票など複数の項目がある場合、見る場所に迷う。","methods":"刺激を下げる、見る場所を指定する、手順を見える形にする","strength":"画面が整理されると、必要な情報を丁寧に扱えることがあります。","tags":["注意・集中","刺激・環境","情報量・速度"],"image":"assets/scenes/cs029.webp"},{"id":"CS030","title":"耳・目・手を同時に使う作業が苦手","cg":"CG04","cgTitle":"情報が多い場面や速い流れについていきにくい","visible":"話を聞きながら入力する、画面を見ながら口頭で報告する、電話しながらメモを取る場面で、聞き漏れや入力ミスが増える。","methods":"情報量を絞る、手順を見える形にする、口頭以外の伝え方を認める","strength":"工程を分けると精度が上がり、確実に作業できます。","tags":["注意・集中","情報量・速度","言葉・相談"],"image":"assets/scenes/cs030.webp"},{"id":"CS031","title":"曖昧な言葉の理解が難しい","cg":"CG06","cgTitle":"あいまいな言葉や相談・報告の形でつまずきやすい","visible":"「適当に」「いい感じに」「普通に」「なるべく早く」と言われると、作業が止まる、または相手の基準と違う仕上がりになる。","methods":"情報量を絞る、手順を見える形にする、見る場所を指定する、優先順位ラベルを付ける","strength":"具体的な基準があると、その基準に忠実に進められます。","tags":["刺激・環境","開始・段取り","情報量・速度","言葉・相談"],"image":"assets/scenes/cs031.webp"},{"id":"CS032","title":"はっきり言われていないルールを読み取りにくい","cg":"CG06","cgTitle":"あいまいな言葉や相談・報告の形でつまずきやすい","visible":"職場の「直接は言われていないけれど期待される行動」（暗黙の了解）に気づきにくい。","methods":"手順を見える形にする、変更点を分けて示す、必要な配慮の伝え方を練習する","strength":"明文化されたルールには忠実に取り組めることが多いです。","tags":["情報量・速度","言葉・相談","変更・例外"],"image":"assets/scenes/cs032.webp"},{"id":"CS033","title":"比喩、冗談、遠回しな言い方の理解が難しい","cg":"CG06","cgTitle":"あいまいな言葉や相談・報告の形でつまずきやすい","visible":"冗談を指示として受け取る、遠回しな注意に気づきにくい、社交辞令をそのまま受け取る。","methods":"口頭以外の伝え方を認める、必要な配慮の伝え方を練習する、事実・解釈・感情を分ける","strength":"直接的な情報では正確に動けます。誠実さとして評価されることがあります。","tags":["情報量・速度","注意・集中","言葉・相談","疲労・身体"],"image":"assets/scenes/cs033.webp"},{"id":"CS034","title":"大事な部分はどこかを理解するのが難しい","cg":"CG06","cgTitle":"あいまいな言葉や相談・報告の形でつまずきやすい","visible":"長い話や資料から、何が重要か、何をすればよいかを拾いにくい。","methods":"情報量を絞る、優先順位ラベルを付ける、進み具合を見える形にする","strength":"大事な点が示されると、細部を丁寧に確認できます。","tags":["言葉・相談","注意・集中","開始・段取り","情報量・速度","不安・回避"],"image":"assets/scenes/cs034.webp"},{"id":"CS035","title":"質問を作ること自体が難しい","cg":"CG06","cgTitle":"あいまいな言葉や相談・報告の形でつまずきやすい","visible":"分からないことはあるが、何を聞けばよいか分からず、相談内容がまとまらない。","methods":"相談・報告テンプレートを使う、選択肢を2つにする、口頭以外の伝え方を認める","strength":"テンプレートがあれば、適切な質問や報告ができることがあります。","tags":["情報量・速度","言葉・相談"],"image":"assets/scenes/cs035.webp"},{"id":"CS036","title":"報告タイミングの判断が難しい","cg":"CG06","cgTitle":"あいまいな言葉や相談・報告の形でつまずきやすい","visible":"困っていても相談できないことがある。ミス、遅れ、未完了の報告も遅れる。","methods":"相談・報告テンプレートを使う、確認が終わったと判断する目安を作る、口頭以外の伝え方を認める","strength":"基準があれば、決められたタイミングで報告できます。","tags":["情報量・速度","言葉・相談","不安・回避"],"image":"assets/scenes/cs036.webp"},{"id":"CS037","title":"雑談や人との距離感で疲れやすい","cg":"CG07","cgTitle":"人とのやりとりや見られている感じで疲れやすい","visible":"雑談に入れない、雑談を終えられない、話しすぎる、相手との距離が近すぎる、急に深い話をする。","methods":"口頭以外の伝え方を認める、必要な配慮の伝え方を練習する、強みを役割に配分する","strength":"話題が明確な会話や役割がある場面では、力を発揮しやすくなります。","tags":["言葉・相談","対人・視線","自立・強み"],"image":"assets/scenes/cs037.webp"},{"id":"CS038","title":"相手の表情や声色を深読みしすぎて怖さを感じる","cg":"CG07","cgTitle":"人とのやりとりや見られている感じで疲れやすい","visible":"相手が少し忙しそう、声が低い、表情が硬いだけで、「怒られた」「嫌われた」と受け取りやすい。","methods":"事実・解釈・感情を分ける、頭に浮かぶ言葉を「頭の中の通知」として扱う、口頭以外の伝え方を認める","strength":"相手の変化に敏感で、配慮や接客に活かせることがあります。","tags":["言葉・相談","対人・視線","疲労・身体","不安・回避"],"image":"assets/scenes/cs038.webp"},{"id":"CS039","title":"視線や見られている感じで緊張しやすい","cg":"CG07","cgTitle":"人とのやりとりや見られている感じで疲れやすい","visible":"面談、発表、隣席、背後の人が気になる場面で、緊張や疲労が増える。視線を合わせすぎる、または合わせられないこともある。","methods":"環境を調整する、口頭以外の伝え方を認める、必要な配慮の伝え方を練習する","strength":"視線以外の聞く姿勢を決めると、対話の質を保てます。","tags":["言葉・相談","刺激・環境","対人・視線","疲労・身体"],"image":"assets/scenes/cs039.webp"},{"id":"CS040","title":"自分の作業進捗を把握するのが苦手","cg":"CG08","cgTitle":"自分の疲れ・気持ち・進み具合に気づきにくい","visible":"作業がどこまで進んだか、残りが何か、今の作業が遅れているかが分からなくなる。","methods":"進み具合を見える形にする、自己管理ツールに移す","strength":"進み具合が見えると、自分でペースを調整しやすくなります。","tags":["不安・回避","疲労・身体"],"image":"assets/scenes/cs040.webp"},{"id":"CS041","title":"自分のミスに気づきにくい","cg":"CG08","cgTitle":"自分の疲れ・気持ち・進み具合に気づきにくい","visible":"誤字、入力先の間違い、計算ミス、提出漏れなどを見つけにくい。","methods":"確認が終わったと判断する目安を作る、見る場所を指定する、エラー修正手順を作る","strength":"観点を絞ると、チェックの精度が上がることがあります。","tags":["疲労・身体","刺激・環境","開始・段取り","不安・回避"],"image":"assets/scenes/cs041.webp"},{"id":"CS042","title":"疲労自覚が遅い","cg":"CG08","cgTitle":"自分の疲れ・気持ち・進み具合に気づきにくい","visible":"限界が近いのに「大丈夫」と言うことがある。その結果、翌日に欠席する、作業後に急に不調が出ることもある。","methods":"休憩と回復を設計する、状態を選択式で確認する、ここまでにする線を決める","strength":"体調を数値化できるようになると、自己管理力が伸びます。","tags":["刺激・環境","疲労・身体","不安・回避","自立・強み"],"image":"assets/scenes/cs042.webp"},{"id":"CS043","title":"感情を識別・言語化しにくい","cg":"CG08","cgTitle":"自分の疲れ・気持ち・進み具合に気づきにくい","visible":"不安、怒り、焦り、恥ずかしさを言葉にできず、黙る、怒る、避ける行動として表れることがある。","methods":"状態を選択式で確認する、事実・解釈・感情を分ける、頭に浮かぶ言葉を「頭の中の通知」として扱う","strength":"選択肢があれば、自分の状態を説明できるようになることがあります。","tags":["情報量・速度","言葉・相談","疲労・身体","不安・回避"],"image":"assets/scenes/cs043.webp"},{"id":"CS044","title":"身体感覚が鈍い","cg":"CG08","cgTitle":"自分の疲れ・気持ち・進み具合に気づきにくい","visible":"頭痛、空腹、眠気、過緊張、動悸、胃の重さなどに気づきにくく、他者からは動きが落ちているように見えることがある。","methods":"状態を選択式で確認する、休憩と回復を設計する、作業や相談を再開する手順を決める","strength":"体のサインが分かると、休憩や相談を早めに選べます。","tags":["刺激・環境","言葉・相談","疲労・身体","不安・回避","自立・強み"],"image":"assets/scenes/cs044.webp"},{"id":"CS045","title":"頭に浮かぶ言葉を事実としてとらえやすい","cg":"CG08","cgTitle":"自分の疲れ・気持ち・進み具合に気づきにくい","visible":"「自分はだめだ」「迷惑をかけた」「どうせ無理」という考えが浮かぶと、そのまま行動が止まることがある。","methods":"事実・解釈・感情を分ける、頭に浮かぶ言葉を「頭の中の通知」として扱う、最初の一手を小さくする","strength":"言葉への感受性が高く、価値や意味を大切にできる面があります。","tags":["開始・段取り","言葉・相談","疲労・身体","不安・回避"],"image":"assets/scenes/cs045.webp"},{"id":"CS046","title":"同じ考えがぐるぐると続く","cg":"CG08","cgTitle":"自分の疲れ・気持ち・進み具合に気づきにくい","visible":"注意されたこと、失敗、相手の表情を何度も考え続け、目の前の作業に戻りにくい。","methods":"事実・解釈・感情を分ける、ここまでにする線を決める、頭に浮かぶ言葉を「頭の中の通知」として扱う、作業や相談を再開する手順を決める","strength":"振り返る力があります。整理できれば学びに変えられます。","tags":["注意・集中","言葉・相談","対人・視線","疲労・身体","不安・回避"],"image":"assets/scenes/cs046.webp"},{"id":"CS047","title":"音・光・においなどの刺激がつらく感じやすい","cg":"CG01","cgTitle":"音や光、人の動きなどで集中がそれやすい","visible":"音、光、におい、服の感触、室温、人の動きなどが気になり、内容の理解や作業の速さが落ちる。","methods":"刺激を下げる、環境を調整する、休憩と回復を設計する","strength":"環境の変化や異常に早く気づく力があります。","tags":["注意・集中","刺激・環境","自立・強み"],"image":"assets/scenes/cs047.webp"},{"id":"CS048","title":"感覚刺激と不安が結びつきやすい","cg":"CG09","cgTitle":"不安や失敗経験で動きが止まりやすい","visible":"特定の音、席、場所、混雑時間帯に近づく前から、不安を感じたり、その場を避けたくなったりする。","methods":"刺激を下げる、失敗しても影響が小さい試し方にする、頭に浮かぶ言葉を「頭の中の通知」として扱う、作業や相談を再開する手順を決める","strength":"自分に合う条件が分かると、環境を選ぶ力につながります。","tags":["刺激・環境","言葉・相談","不安・回避"],"image":"assets/scenes/cs048.webp"},{"id":"CS049","title":"予測できない変化に強い反応が出やすい","cg":"CG05","cgTitle":"変更や例外があると、次の動きが組み立てにくい","visible":"突然の音、急な声かけ、予定外の変更、知らない人の介入などで、驚き、不安、怒り、固まるなどの反応が強く出る。","methods":"変更点を分けて示す、見通しを先に出す、作業や相談を再開する手順を決める","strength":"予告があると準備でき、変化に対応できる範囲が広がります。","tags":["不安・回避","刺激・環境","記憶・予定","変更・例外","言葉・相談"],"image":"assets/scenes/cs049.webp"},{"id":"CS050","title":"失敗しそうと感じやすく、試す前に止まりやすい","cg":"CG09","cgTitle":"不安や失敗経験で動きが止まりやすい","visible":"始める前から「無理」「また失敗する」と感じ、課題に手をつけにくい。","methods":"最初の一手を小さくする、できた行動をすぐ認めて続けやすくする、失敗しても影響が小さい試し方にする、「自分にもできる」という感覚を再学習する","strength":"危険や失敗の可能性を予測できるため、事前準備では強みになることがあります。","tags":["刺激・環境","開始・段取り","変更・例外","不安・回避","自立・強み"],"image":"assets/scenes/cs050.webp"},{"id":"CS051","title":"完成の基準が高く、提出や相談が遅れる","cg":"CG09","cgTitle":"不安や失敗経験で動きが止まりやすい","visible":"完成度が足りないと感じて、成果物を提出できないことがある。相談内容を整えようとして、相談が遅れる。","methods":"確認が終わったと判断する目安を作る、優先順位ラベルを付ける、失敗しても影響が小さい試し方にする、ここまでにする線を決める","strength":"高い品質意識や責任感として活きることがあります。","tags":["刺激・環境","開始・段取り","言葉・相談","不安・回避"],"image":"assets/scenes/cs051.webp"},{"id":"CS052","title":"安心保証を求めやすい","cg":"CG09","cgTitle":"不安や失敗経験で動きが止まりやすい","visible":"「これで大丈夫ですか」「間違っていませんか」を繰り返す。保証がないと次の作業へ進めないことがある。","methods":"確認が終わったと判断する目安を作る、支援を段階的に薄くする、自己管理ツールに移す、「自分にもできる」という感覚を再学習する","strength":"確認を適切に使えば、重大なミスの予防につながります。","tags":["刺激・環境","不安・回避","自立・強み"],"image":"assets/scenes/cs052.webp"},{"id":"CS053","title":"苦手回避で一時的に楽になることが習慣化しやすい","cg":"CG09","cgTitle":"不安や失敗経験で動きが止まりやすい","visible":"苦手課題の前に、スマートフォン確認、離席、別作業、欠席、連絡を避ける行動などが多い。","methods":"最初の一手を小さくする、できた行動をすぐ認めて続けやすくする、失敗しても影響が小さい試し方にする、作業や相談を再開する手順を決める","strength":"しんどさを早めに察知して自分を守る力として働くことがあります。","tags":["刺激・環境","注意・集中","開始・段取り","言葉・相談","不安・回避"],"image":"assets/scenes/cs053.webp"},{"id":"CS054","title":"動けなくなることや固まることが起きやすい","cg":"CG09","cgTitle":"不安や失敗経験で動きが止まりやすい","visible":"強くしんどくなった後に、黙る、動けない、返答できない、席で固まることがある。","methods":"刺激を下げる、選択肢を2つにする、状態を選択式で確認する、作業や相談を再開する手順を決める","strength":"早期サインを拾えると、大きく崩れる前に調整できます。","tags":["刺激・環境","言葉・相談","不安・回避"],"image":"assets/scenes/cs054.webp"},{"id":"CS055","title":"つらい場面があると強い反論やいらだちが出やすい","cg":"CG09","cgTitle":"不安や失敗経験で動きが止まりやすい","visible":"変更、注意、音、対人刺激の後に、強い反論やいらだちが出ることがある。","methods":"刺激を下げる、事実・解釈・感情を分ける、作業や相談を再開する手順を決める","strength":"不公平や不整合に気づきやすく、改善提案につながることがあります。","tags":["刺激・環境","注意・集中","変更・例外","言葉・相談","対人・視線"],"image":"assets/scenes/cs055.webp"},{"id":"CS056","title":"周囲に合わせすぎて疲れやすい","cg":"CG09","cgTitle":"不安や失敗経験で動きが止まりやすい","visible":"他者からは問題なく見えるが、後で強い疲労や欠席が出ることがある。周囲に合わせすぎていることがある。","methods":"休憩と回復を設計する、状態を選択式で確認する、必要な配慮の伝え方を練習する、ここまでにする線を決める","strength":"場に合わせる力、模倣力、丁寧な対人対応として働くことがあります。","tags":["刺激・環境","記憶・予定","対人・視線","疲労・身体","不安・回避"],"image":"assets/scenes/cs056.webp"},{"id":"CS057","title":"頑張りすぎて反動が出やすい","cg":"CG08","cgTitle":"自分の疲れ・気持ち・進み具合に気づきにくい","visible":"その日は頑張れるが、翌日に欠席、不調、集中低下が出ることがある。短期の成果と継続性がずれることがある。","methods":"休憩と回復を設計する、状態を選択式で確認する、ここまでにする線を決める","strength":"短期集中では高い成果を出せることがあります。","tags":["刺激・環境","注意・集中","疲労・身体","不安・回避","自立・強み"],"image":"assets/scenes/cs057.webp"},{"id":"CS058","title":"確認がないと作業を進めにくく、確認が習慣化しやすい","cg":"CG10","cgTitle":"助けを借りるタイミングや強みとの付き合い方がつかみにくい","visible":"自分で判断できる場面でも、職員の確認がないと作業に入れない、次の作業へ進めないことがある。","methods":"確認が終わったと判断する目安を作る、職員の声かけを少しずつ減らす、本人が使えるメモやチェックリストに移す、できた行動を一緒に確認する","strength":"助けを借りる力があります。確認の方法を段階的に変えると、自分で進める力につなげやすくなります。","tags":["開始・段取り","刺激・環境","不安・回避","自立・強み"],"image":"assets/scenes/cs058.webp"},{"id":"CS059","title":"困っていることを言い出しにくい","cg":"CG10","cgTitle":"助けを借りるタイミングや強みとの付き合い方がつかみにくい","visible":"分からないこと、できないこと、遅れていること、体調が悪いことを言えず、後から他者が気づくことがある。","methods":"相談・報告テンプレートを使う、口頭以外の伝え方を認める、事実と気持ちを分ける、早めに伝えられたことを認める","strength":"自分で何とかしようとする責任感がある場合があります。","tags":["開始・段取り","刺激・環境","言葉・相談","疲労・身体","自立・強み"],"image":"assets/scenes/cs059.webp"},{"id":"CS060","title":"「自分にもできる」という感覚が低く、試す前に諦めやすい","cg":"CG10","cgTitle":"助けを借りるタイミングや強みとの付き合い方がつかみにくい","visible":"「どうせできない」「自分には無理」と感じ、条件を変えればできそうなことも試しにくい。","methods":"最初の一手を小さくする、失敗しても影響が小さい試し方にする、できた行動をすぐ認める、「少しできた」経験を積み重ねる","strength":"危険や失敗の可能性を慎重に見積もる力として使える場合があります。","tags":["開始・段取り","刺激・環境","不安・回避","自立・強み"],"image":"assets/scenes/cs060.webp"},{"id":"CS061","title":"新しい情報やアイデアに考えが広がって、目的を見失う","cg":"CG10","cgTitle":"助けを借りるタイミングや強みとの付き合い方がつかみにくい","visible":"調べもの中などに関連情報へ注意が広がる。新しいアイデアで当初の課題からそれることがある。","methods":"時間を区切る、進み具合を見える形にする、ここまでにする線を決める、アイデアを別メモに逃がす、強みが活きる役割を分ける","strength":"発想、企画、改善案、情報探索では強みになります。","tags":["開始・段取り","刺激・環境","自立・強み"],"image":"assets/scenes/cs061.webp"},{"id":"CS062","title":"成果が遠い作業だと動き出しにくい","cg":"CG10","cgTitle":"助けを借りるタイミングや強みとの付き合い方がつかみにくい","visible":"就職準備、資格学習、長期課題など、成果が先にある作業で、最初の一歩が出にくい。","methods":"最初の一手を小さくする、今日できた分を見える形にする、短い区切りごとに確認する、できた行動をすぐ認める","strength":"短い締切や、すぐ反応が返ってくる仕事では動きやすくなります。","tags":["刺激・環境","開始・段取り","自立・強み"],"image":"assets/scenes/cs062.webp"},{"id":"CS063","title":"決まった流れには強いが、変更には弱い","cg":"CG05","cgTitle":"変更や例外があると、次の動きが組み立てにくい","visible":"決まった作業は安定するが、手順変更、担当変更、例外が入ると、作業の流れや気持ちが大きく乱れる。","methods":"変更点を分けて示す、見通しを先に出す、強みを役割に配分する","strength":"反復作業、決まった手順の仕事、品質維持で強みになります。","tags":["不安・回避","変更・例外","自立・強み"],"image":"assets/scenes/cs063.webp"},{"id":"CS064","title":"深く集中できるが、切り替えと休憩が難しい","cg":"CG10","cgTitle":"助けを借りるタイミングや強みとの付き合い方がつかみにくい","visible":"深く集中したときは高い成果が出るが、休憩、終了、次の予定への切り替えが難しい。","methods":"休憩と再開の手順を決める、終わりの時間を先に決める、進み具合を見える形にする、ここまでにする線を決める","strength":"専門作業、創作、調査、分析では大きな強みになります。","tags":["開始・段取り","注意・集中","記憶・予定","自立・強み"],"image":"assets/scenes/cs064.webp"}];
+const CGS = [{"id":"CG01","title":"音や光、人の動きなどで集中がそれやすい"},{"id":"CG02","title":"言われたことや次の行動を覚えながら進めるのが大変"},{"id":"CG03","title":"何から始めるか、どの順番で進めるかが決まりにくい"},{"id":"CG04","title":"情報が多い場面や速い流れについていきにくい"},{"id":"CG05","title":"変更や例外があると、次の動きが組み立てにくい"},{"id":"CG06","title":"あいまいな言葉や相談・報告の形でつまずきやすい"},{"id":"CG07","title":"人とのやりとりや見られている感じで疲れやすい"},{"id":"CG08","title":"自分の疲れ・気持ち・進み具合に気づきにくい"},{"id":"CG09","title":"不安や失敗経験で動きが止まりやすい"},{"id":"CG10","title":"助けを借りるタイミングや強みとの付き合い方がつかみにくい"}];
+const statusEl = document.getElementById('status');
+const listGridEl = document.getElementById('listGrid');
+const detailGridEl = document.getElementById('detailGrid');
+const queryEl = document.getElementById('query');
+const cgFilterEl = document.getElementById('cgFilter');
+const tabs = [...document.querySelectorAll('.tab')];
+const modalEl = document.getElementById('imageModal');
+const modalTitleEl = document.getElementById('imageModalTitle');
+const modalBodyEl = document.getElementById('imageModalBody');
+const modalCloseEl = document.getElementById('imageModalClose');
+let activeView = 'list';
+
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, (ch) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[ch]));
+}
+
+for (const cg of CGS) {
+  const option = document.createElement('option');
+  option.value = cg.id;
+  option.textContent = `${cg.id} ${cg.title}`;
+  cgFilterEl.appendChild(option);
+}
+
+function filteredScenes() {
+  const q = queryEl.value.trim().toLowerCase();
+  const cg = cgFilterEl.value;
+  return SCENES.filter((item) => {
+    const matchesCg = cg === 'all' || item.cg === cg;
+    const text = [item.id, item.title, item.cg, item.cgTitle, item.visible, item.methods, item.strength, ...(item.tags || [])].join(' ').toLowerCase();
+    return matchesCg && (!q || text.includes(q));
+  });
+}
+
+function listCard(item) {
+  return `<article class="list-card">
+    <button class="image-button" type="button" data-image-src="${escapeHTML(item.image)}" data-image-title="${escapeHTML(item.id)} ${escapeHTML(item.title)}">
+      <img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.id)} ${escapeHTML(item.title)} の場面画像" loading="lazy" width="768" height="432">
+    </button>
+    <div class="list-body">
+      <div class="eyebrow"><span class="badge">${escapeHTML(item.id)}</span><span class="badge">${escapeHTML(item.cg)}</span></div>
+      <span class="list-title">${escapeHTML(item.title)}</span>
+    </div>
+  </article>`;
+}
+
+function detailCard(item) {
+  return `<article class="card" id="${escapeHTML(item.id)}">
+    <img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.id)} ${escapeHTML(item.title)} の場面画像" loading="lazy" width="768" height="432">
+    <div class="body">
+      <div class="eyebrow">
+        <span class="badge">${escapeHTML(item.id)}</span>
+        <span class="badge">${escapeHTML(item.cg)}</span>
+        <span>${escapeHTML(item.cgTitle)}</span>
+      </div>
+      <h2>${escapeHTML(item.title)}</h2>
+      <div class="block"><strong>詳細</strong><p>${escapeHTML(item.visible)}</p></div>
+      <div class="block"><strong>支援</strong><p>${escapeHTML(item.methods)}</p></div>
+      <div class="block"><strong>強みとして使える面</strong><p>${escapeHTML(item.strength)}</p></div>
+      <div class="tags">${(item.tags || []).map((tag) => `<span class="tag">${escapeHTML(tag)}</span>`).join('')}</div>
+    </div>
+  </article>`;
+}
+
+function setView(view) {
+  activeView = view;
+  document.querySelectorAll('.view').forEach((section) => section.classList.toggle('active', section.id === `view-${view}`));
+  tabs.forEach((tab) => tab.setAttribute('aria-selected', tab.dataset.view === view ? 'true' : 'false'));
+}
+
+function render() {
+  const filtered = filteredScenes();
+  statusEl.textContent = `${filtered.length} / ${SCENES.length} 件を表示`;
+  listGridEl.innerHTML = filtered.length ? filtered.map(listCard).join('') : '<div class="empty">該当する場面がありません。</div>';
+  detailGridEl.innerHTML = filtered.length ? filtered.map(detailCard).join('') : '<div class="empty">該当する場面がありません。</div>';
+}
+
+function openImageModal(src, title) {
+  modalTitleEl.textContent = title || '場面イメージ';
+  modalBodyEl.innerHTML = `<img src="${escapeHTML(src)}" alt="${escapeHTML(title || '場面イメージ')}">`;
+  modalEl.classList.add('is-open');
+  modalEl.setAttribute('aria-hidden', 'false');
+  modalCloseEl.focus();
+}
+
+function closeImageModal() {
+  modalEl.classList.remove('is-open');
+  modalEl.setAttribute('aria-hidden', 'true');
+  modalBodyEl.innerHTML = '';
+}
+
+tabs.forEach((tab) => tab.addEventListener('click', () => setView(tab.dataset.view)));
+queryEl.addEventListener('input', render);
+cgFilterEl.addEventListener('change', render);
+document.body.addEventListener('click', (event) => {
+  const imageButton = event.target.closest('[data-image-src]');
+  if (imageButton && activeView === 'list') {
+    openImageModal(imageButton.dataset.imageSrc, imageButton.dataset.imageTitle);
+  }
+});
+modalCloseEl.addEventListener('click', closeImageModal);
+modalEl.addEventListener('click', (event) => { if (event.target === modalEl) closeImageModal(); });
+document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeImageModal(); });
+render();
+</script>
+</body>
+</html>
