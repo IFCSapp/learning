@@ -99,8 +99,9 @@ a:hover { text-decoration: underline; }
 .detail-head { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 18px; }
 .detail-head h2 { margin: 10px 0 0; font-size: clamp(1.2rem, 2vw, 1.65rem); line-height: 1.45; }
 .detail-cg { color: var(--muted); font-size: 0.94rem; }
-.detail-summary { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 50%); gap: 12px; align-items: start; border: 1px solid var(--primary-border); background: #f3fbf9; border-radius: 16px; padding: 13px; }
+.detail-summary { display: grid; grid-template-columns: 1fr; gap: 12px; align-items: start; border: 1px solid var(--primary-border); background: #f3fbf9; border-radius: 16px; padding: 13px; }
 .detail-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.summary-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .summary-item { background: #fff; border: 1px solid rgba(15,118,110,0.18); border-radius: 12px; padding: 10px 11px; }
 .summary-item strong { display: block; color: var(--primary); font-size: 0.84rem; margin-bottom: 5px; }
 .summary-item p { margin: 0; font-size: 0.9rem; line-height: 1.55; }
@@ -110,6 +111,8 @@ a:hover { text-decoration: underline; }
 .info-block { border: 1px solid var(--border); border-radius: 15px; padding: 15px 16px; background: #fff; }
 .info-block h3 { margin: 0 0 8px; font-size: 1rem; }
 .info-block p { margin: 0; }
+.info-subitem + .info-subitem { margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(15, 23, 42, 0.1); }
+.info-subitem strong { display: block; margin-bottom: 4px; font-size: 0.9rem; }
 .info-block.scene { background: var(--scene-bg); border-color: var(--scene-border); }
 .info-block.scene h3 { color: var(--scene-head); }
 .info-block.bridge { background: var(--bridge-bg); border-color: var(--bridge-border); }
@@ -359,9 +362,10 @@ a:hover { text-decoration: underline; }
 .scene-table { display: grid; gap: 10px; }
 .scene-row { border: 1px solid var(--border-soft); background: #fff; border-radius: 14px; padding: 14px; }
 .scene-row h3 { margin: 0 0 8px; font-size: 1.05rem; }
-.scene-row-layout { display: grid; grid-template-columns: minmax(280px, 42%) minmax(0, 1fr); gap: 12px; align-items: start; }
+.scene-row-layout { display: grid; grid-template-columns: minmax(280px, 42%) minmax(0, 1fr); gap: 12px; align-items: end; }
 .scene-row-media { min-width: 0; }
-.scene-row .columns { grid-template-columns: 1fr; margin-top: 0; }
+.scene-row-below { display: grid; gap: 8px; margin-top: 8px; }
+.scene-row .columns { grid-template-columns: 1fr; margin-top: 0; align-self: end; }
 .columns { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
 .small-block { border: 1px solid var(--border-soft); border-radius: 12px; padding: 10px; }
 .small-block p { margin: 4px 0 0; }
@@ -369,6 +373,7 @@ a:hover { text-decoration: underline; }
 .small-block.bridge { background: var(--bridge-bg); border-color: var(--bridge-border); }
 .small-block.level { background: var(--level-bg); border-color: var(--level-border); }
 .small-block.support { background: var(--support-bg); border-color: var(--support-border); }
+.small-block.condition { background: var(--condition-bg); border-color: var(--condition-border); }
 .small-block.strength { background: var(--strength-bg); border-color: var(--strength-border); }
 .footer { color: var(--muted); text-align: center; font-size: 0.85rem; padding: 24px 0; }
 .scene-visual { margin: 0; border: 1px solid var(--border-soft); border-radius: 14px; overflow: hidden; background: #eef2f6; }
@@ -638,6 +643,7 @@ a:hover { text-decoration: underline; }
   .detail-cg { font-size: 0.82rem; }
   .detail-summary,
   .detail-actions { grid-template-columns: 1fr; gap: 8px; padding: 10px; }
+  .summary-cards { grid-template-columns: 1fr; gap: 8px; }
   .summary-item { padding: 10px; }
   .detail-panel > .scene-visual { max-width: none; }
   .tag-row { gap: 5px; margin-top: 9px; }
@@ -760,7 +766,7 @@ a:hover { text-decoration: underline; }
 
   <section id="view-plot" class="view plot-layout">
     <div class="panel">
-      <div class="search-intro">困り方を4つのエリアから選びます。近いエリアの場面カードを開くと、まず整える条件と支援の一手が確認できます。</div>
+      <div class="search-intro">困り方を4つのエリアから選びます。近いエリアの場面カードを開くと、何を整えるかと支援の一手が確認できます。</div>
       <div class="area-filter-chips" id="plotAreaChips" aria-label="エリアでしぼる"></div>
       <div class="plot-full">
         <div class="plot-full-head">
@@ -986,7 +992,83 @@ function splitLines(s) { return String(s || '').split(/\n/).map(x => x.trim()).f
 function methodsList(item) { return String(item.methods || '').split('、').map(x => x.trim()).filter(Boolean); }
 function findItem(id) { return DATA.items.find(x => x.id === id) || null; }
 function findCg(id) { return DATA.cgs.find(x => x.id === id); }
-function textOf(item) { return [item.id, item.title, item.cg, item.cgTitle, item.visible, item.methods, item.strength, DAILY_BY_ID[item.id] || '', (item.tags||[]).join(' ')].join(' '); }
+const LEVEL_BY_ID = {
+  CS001: "通知、会話、人の動きなどの小さな刺激が重なるだけで、作業の手が止まり、場所を変える、見る場所を示す、再開手順を出すなどの支援がないと元の作業へ戻りにくくなる状態です。",
+  CS002: "作業時間が長くなると、ミス、離席、眠気、別作業が増え、短い休憩や作業単位の区切りを入れないと同じ質で続けにくい状態です。",
+  CS003: "声かけや通知で一度それると、前に開いていた資料や次にすることを思い出しにくくなり、再開メモや戻る目印がないと作業が止まり続ける状態です。",
+  CS004: "聞く、書く、操作することが同時になると一部が抜け、口頭だけではなく順番を分ける、記録を残す支援がないと、聞き漏れや作業漏れが続く状態です。",
+  CS005: "細部の修正に入り込むと全体の提出や完了が止まり、完成基準や時間上限を一緒に決めないと作業が終わりにくくなる状態です。",
+  CS006: "背後の人の動きや視線、職員の表情が気になって警戒が続き、席、距離、声かけ方法を調整しないと集中や相談が難しくなる状態です。",
+  CS047: "音、光、におい、服の感触、室温などがつらく、刺激を下げる環境や休憩場所がないと理解や作業の速さが落ち、体調悪化につながる状態です。",
+
+  CS007: "口頭説明を受けた直後は分かったように見えても、数分後に一部が抜け、次の行動や報告が不安定になる状態です。メモやチェックリストがないと手順を最後まで保ちにくくなります。",
+  CS008: "条件や例外が含まれる指示で、順番や除外条件が抜けやすく、確認の形を残さないと違う作業に進んだり、やり直しが増えたりする状態です。",
+  CS009: "次の予定、提出、報告、持ち物を頭の中だけで保ちにくく、リマインダーや見える予定表がないと通所や作業の流れが崩れやすい状態です。",
+  CS010: "作業中に目的や完成の形が見えなくなり、ゴールや見本を確認できないと作業がそれたり止まったりする状態です。",
+  CS011: "人名、担当名、制度名、略語が思い出せず、質問や報告を始めにくくなる状態です。用語一覧や宛先メモがないと相談が遅れやすくなります。",
+  CS012: "後で行う予定だった連絡、提出、準備を必要なタイミングで思い出しにくく、見えるリマインダーがないと未提出や報告遅れにつながる状態です。",
+
+  CS013: "内容は分かっていても一手目が出ず、開始の合図や30秒から3分でできる行動に分けないと長く止まりやすい状態です。",
+  CS014: "どの順番で進めるかを自分だけで決めにくく、手順カードや優先順位の相談がないと時間だけが過ぎやすい状態です。",
+  CS015: "目についた作業や細部に流れ、締切が近い作業が残りやすい状態です。A、B、Cなどの優先ラベルや今日終える範囲を決める支援が必要です。",
+  CS016: "完了基準が見えないと直し続ける、または早く終えすぎる状態です。提出前の確認項目、確認回数、終わりの合図を具体的に決める必要があります。",
+  CS017: "ミスに気づくと修正箇所の見通しが立たず、作業が止まる、隠す、全部やり直す、強く落ち込む状態です。直す順番と相談先を先に示す必要があります。",
+  CS018: "所要時間の見積もりがずれやすく、余裕があるつもりでも締切直前に焦りが強まる状態です。見積もりを一緒に置き、途中確認の時刻を決める必要があります。",
+
+  CS025: "説明や作業ペースが速いと、聞くことに追いつかず、聞き漏れ、入力ミス、固まる反応が増える状態です。速度を下げ、確認時間を挟む必要があります。",
+  CS026: "長い説明や資料で後半が残りにくく、内容が分かったように見えても次の行動に移せない状態です。区切りごとの要点確認と記録が必要です。",
+  CS027: "長文、求人票、申請書、入力フォームを見ただけで手が止まり、読み始めや入力の最初の一手が出にくい状態です。見る欄や入力順を絞る必要があります。",
+  CS028: "聞かれてすぐ答えることが難しく、黙る、返事が遅れる、面談後に答えが出る状態です。考える時間、書いて答える方法、後から伝える手順を認める必要があります。",
+  CS029: "表、メニュー、複数ウィンドウの中で見る場所に迷い、探すだけで疲れて作業が進みにくくなる状態です。見る場所を丸や番号で示す必要があります。",
+  CS030: "聞く、見る、入力することが同時になると抜けやミスが増え、作業が止まりやすくなる状態です。聞く時間と入力する時間を分ける支援が必要です。",
+
+  CS019: "慣れた手順から新しい手順へ切り替えると、どこが同じでどこが違うか分からず、手が止まったり不安定になったりする状態です。変更点を差分で示す必要があります。",
+  CS020: "予定や担当が変わると、その後に何をすればよいか組み直しにくく、固まる、怒る、欠席したくなる状態です。変更後の次の一手を明示する必要があります。",
+  CS021: "通常ルールから外れる例外や急ぎの判断で、どの基準を使えばよいか見えず止まる状態です。例外時の判断表や相談先を用意する必要があります。",
+  CS022: "別案や相手の事情をすぐには受け入れられず、納得するまで作業や話し合いが止まりやすい状態です。否定せず、案を並べて比較する時間が必要です。",
+  CS023: "事業所内で練習した行動が、実習先、家庭、面接、別担当者の場面では出にくい状態です。場面を変えた練習と持ち運べる手順書が必要です。",
+  CS024: "結果や相手の反応が読めない場面で、確認や先延ばし、回避が増える状態です。分からないまま試せる小さい行動と、相談の条件を決める必要があります。",
+  CS049: "突然の音、声かけ、予定外の変更、知らない人の介入で、驚きや不安、怒り、固まりが強く出る状態です。刺激を下げ、安全確認と落ち着く場所を優先する必要があります。",
+  CS063: "決まった流れでは安定していても、手順、担当、例外が入ると作業と気持ちの流れが大きく乱れる状態です。変わる部分と変わらない部分を先に示す必要があります。",
+
+  CS031: "『適当に』『いい感じに』『なるべく早く』などの言葉で基準が見えず、作業が止まるか、相手の期待と違う仕上がりになる状態です。量、期限、完成例に置き換える必要があります。",
+  CS032: "明文化されていない期待や優先順位を読み取りにくく、知らないまま失敗したように見える状態です。暗黙ルールを言葉や表で示す必要があります。",
+  CS033: "冗談、社交辞令、遠回しな注意を指示や否定として受け取りやすく、対応に迷う状態です。意図を確認できる言い方と、指示か雑談かを分ける必要があります。",
+  CS034: "長い話や資料から重要点を拾いにくく、結局何をすればよいか分からない状態です。要点、担当行動、期限を短く取り出して示す必要があります。",
+  CS035: "分からないことはあるのに質問文が作れず、相談が始まらない状態です。質問テンプレートや『ここで止まっています』と伝える型が必要です。",
+  CS036: "ミス、遅れ、未完了をいつ報告するか判断できず、報告が遅れて問題が大きくなる状態です。報告する基準と最初の一文を決める必要があります。",
+
+  CS037: "雑談に入る、終える、距離を保つことに気を使いすぎ、作業や通所後に疲れが強く出る状態です。雑談の時間、役割、切り上げ方を決める必要があります。",
+  CS038: "表情や声色の変化を『怒られた』『嫌われた』と受け取りやすく、相談や作業が止まる状態です。事実確認の型と距離を取る時間が必要です。",
+  CS039: "視線や見られている感覚で緊張が強くなり、面談、発表、隣席作業で疲れやすい状態です。座席、視線の向け方、発表方法を調整する必要があります。",
+
+  CS040: "作業の現在位置や残りが見えず、進み具合を自分で判断しにくい状態です。終わった項目、次の項目、残り時間を見えるようにする必要があります。",
+  CS041: "誤字、入力先の違い、提出漏れなどに自分では気づきにくく、後で指摘されて落ち込みややり直しが増える状態です。確認する場所と方法を具体化する必要があります。",
+  CS042: "疲れに気づくのが遅く、その場では大丈夫に見えても翌日の欠席や強い不調につながる状態です。数値化、休憩条件、作業上限を先に決める必要があります。",
+  CS043: "不安、怒り、焦り、恥ずかしさを言葉にしにくく、黙る、避ける、怒る形で表れやすい状態です。感情名を選ぶカードや短い伝え方が必要です。",
+  CS044: "空腹、眠気、頭痛、動悸、胃の重さなどに気づくのが遅れ、作業低下や不調として出る状態です。体のサインを選ぶ確認と休憩、食事、受診相談の手順が必要です。",
+  CS045: "『自分はだめだ』『迷惑をかけた』などの頭に浮かぶ言葉を事実のように受け取り、作業や相談が止まる状態です。その言葉に気づき、距離を取る練習が必要です。",
+  CS046: "注意されたこと、失敗、相手の表情を繰り返し考え続け、目の前の作業へ戻りにくい状態です。考えを書き出し、戻る作業を小さく決める必要があります。",
+  CS057: "その日は頑張れても、翌日や週末に欠席、不調、集中低下が出る状態です。短期の成果だけでなく、作業量と回復時間の上限を決める必要があります。",
+
+  CS048: "特定の音、席、場所、混雑時間帯を思い出すだけで不安が出て、その場に近づきにくくなる状態です。刺激を下げる条件と低リスクな慣らし方を決める必要があります。",
+  CS050: "始める前から失敗を予想し、課題や相談に手をつけにくい状態です。本番ではなく下書き、試し作業、短時間だけ始める形にする必要があります。",
+  CS051: "完成度が足りないと感じ、提出や相談を先延ばしにしやすい状態です。仮提出、相談の下書き、確認回数の上限を決める必要があります。",
+  CS052: "確認してもらわないと進めず、保証を何度も求める状態です。確認できる回数、本人が見る基準、確認後の次の行動を決める必要があります。",
+  CS053: "苦手課題の前に別作業、スマートフォン確認、離席、欠席、連絡回避が続きやすい状態です。避ける前の小さな一手と戻る手順を用意する必要があります。",
+  CS054: "強くしんどくなった後、声が出ない、返答できない、席で固まる状態です。説得より安全確認、刺激を下げること、落ち着いてからの再開手順を優先します。",
+  CS055: "注意、変更、音、対人刺激の後に反論やいらだちが強く出て、その場を続けにくい状態です。安全を確保し、距離を取る時間と再開条件を決める必要があります。",
+  CS056: "その場では合わせられても、後から強い疲労や欠席として出る状態です。見た目の適応だけで判断せず、対人時間や休憩の上限を決める必要があります。",
+
+  CS058: "職員や上司の確認がないと作業を進めにくく、確認が習慣化して自分で判断する機会が減る状態です。確認基準を本人が見返せる形へ移す必要があります。",
+  CS059: "分からないこと、遅れ、体調不良を言い出せず、後から周囲が気づく状態です。早めに伝える一文と、口頭以外の相談方法を決める必要があります。",
+  CS060: "条件を変えれば試せることでも『自分には無理』と感じ、始める前に諦めやすい状態です。小さく成功しやすい試行とできた行動の確認が必要です。",
+  CS061: "関連情報や新しい案に広がり、当初の目的や提出物からそれやすい状態です。調べる範囲、戻る目印、終了時刻を決める必要があります。",
+  CS062: "成果が先にある作業で今日の一歩の意味を感じにくく、始めにくい状態です。短い作業単位と、終えたことが分かる記録や声かけが必要です。",
+  CS064: "深く集中すると高い成果が出る一方で、休憩、終了、次の予定への切り替えが難しい状態です。終了合図、作業上限、切り替え前の保存手順を決める必要があります。"
+};
+const getLevelText = (item) => LEVEL_BY_ID[item.id] ?? LEVEL_BY_CG[item.cg] ?? "";
+function textOf(item) { return [item.id, item.title, item.cg, item.cgTitle, item.visible, item.methods, item.strength, DAILY_BY_ID[item.id] || '', getLevelText(item), (item.tags||[]).join(' ')].join(' '); }
 function currentEntry() { return ENTRY_FILTERS.find(x => x.id === state.exploreEntry) || ENTRY_FILTERS[0]; }
 function itemMatchesEntry(item) {
   const entry = currentEntry();
@@ -1012,7 +1094,7 @@ function bridgeFor(item) {
   const methodText = methodsList(item).slice(0, 3).join('、');
   return {
     daily: DAILY_BY_ID[item.id] || cg.self_scene || '',
-    level: LEVEL_BY_CG[item.cg] || '一般的な困りごとを超えて、作業、相談、通所、体調に繰り返し影響する水準。',
+    level: getLevelText(item) || '一般的な困りごとを超えて、作業、相談、通所、体調に繰り返し影響する水準。',
     condition: (CONDITION_BY_CG[item.cg] || '') + (methodText ? ' この場面では、まず「' + methodText + '」の中から一つ選んで試します。' : '')
   };
 }
@@ -1267,18 +1349,13 @@ function detailHTML(item) {
       <div class="tag-row">${(item.tags || []).map(t => `<span class="tag">${escapeHTML(t)}</span>`).join('')}</div>
     </header>
     <section class="detail-summary" aria-label="場面の要約">
-      <div class="summary-item"><strong>何が起きているか</strong><p>${escapeHTML(firstSentence(item.visible, bridge.daily))}</p></div>
       <div class="summary-image">${sceneImageCompactHTML(item)}</div>
+      <div class="summary-cards">
+        <div class="summary-item"><strong>この場面で起きていること</strong><p>${escapeHTML(item.visible)}</p></div>
+        <div class="summary-item"><div class="info-subitem"><strong>日常的な水準</strong><p>${escapeHTML(bridge.daily)}</p></div><div class="info-subitem"><strong>支援を要する水準</strong><p>${escapeHTML(bridge.level)}</p></div></div>
+      </div>
     </section>
-    <section class="detail-actions" aria-label="最初に行う支援">
-      <div class="summary-item"><strong>何を整えるか</strong><p>${escapeHTML(firstSentence(bridge.condition))}</p></div>
-      <div class="summary-item"><strong>職員の一手</strong><p>${escapeHTML(firstSentence(support))}</p></div>
-    </section>
-    <section class="info-block scene"><h3>この場面で起きていること</h3><p>${escapeHTML(item.visible)}</p></section>
-    <section class="info-block support"><h3>まず試す支援</h3><p>${escapeHTML(item.methods)}</p></section>
-    <section class="info-block condition"><h3>まず整える条件</h3><p>${escapeHTML(bridge.condition)}</p></section>
-    <section class="info-block bridge"><h3>声かけ例</h3><p>${escapeHTML(voice)}</p></section>
-    <section class="info-block level"><h3>支援を要する水準</h3><p>${escapeHTML(bridge.level)}</p></section>
+    <section class="info-block support"><h3>支援の組み立て</h3><div class="info-subitem"><strong>職員の一手</strong><p>${escapeHTML(support)}</p></div><div class="info-subitem"><strong>声掛け例</strong><p>${escapeHTML(voice)}</p></div><div class="info-subitem"><strong>試すこと</strong><p>${escapeHTML(item.methods)}</p></div><div class="info-subitem"><strong>何を整えるか</strong><p>${escapeHTML(bridge.condition)}</p></div></section>
     <section class="info-block strength"><h3>強みとして使える面</h3><p>${escapeHTML(item.strength)}</p></section>
     <section class="info-block"><h3>関連する場面</h3><div class="related-list">${related || '<p>関連する場面はありません。</p>'}</div></section>
     <section class="info-block"><h3>分類コード・支援コード</h3><p>${escapeHTML(item.cgTitle)} <span class="inline-code">${escapeHTML(item.cg)}</span> <span class="inline-code">${escapeHTML(item.id)}</span></p></section>
@@ -1337,7 +1414,9 @@ function renderReading() {
       <div class="scene-table">
         ${items.map(item => {
           const bridge = bridgeFor(item);
-          return `<section class="scene-row" id="${escapeHTML(item.id)}"><h3>${escapeHTML(item.title)} <span class="inline-code">${escapeHTML(item.id)}</span></h3><div class="tag-row">${(item.tags || []).map(t => `<span class="tag">${escapeHTML(t)}</span>`).join('')}</div><div class="scene-row-layout"><div class="scene-row-media">${sceneImageHTML(item)}</div><div class="columns"><div class="small-block scene"><strong>場面</strong><p>${escapeHTML(item.visible)}</p></div><div class="small-block bridge"><strong>支援者の日常</strong><p>${escapeHTML(bridge.daily)}</p></div><div class="small-block level"><strong>支援を要する水準</strong><p>${escapeHTML(bridge.level)}</p></div><div class="small-block support"><strong>支援</strong><p>${escapeHTML(item.methods)}</p></div><div class="small-block strength"><strong>強みとして使える面</strong><p>${escapeHTML(item.strength)}</p></div></div></div></section>`;
+          const support = supportLead(item);
+          const voice = voiceExample(item);
+          return `<section class="scene-row" id="${escapeHTML(item.id)}"><h3>${escapeHTML(item.title)} <span class="inline-code">${escapeHTML(item.id)}</span></h3><div class="tag-row">${(item.tags || []).map(t => `<span class="tag">${escapeHTML(t)}</span>`).join('')}</div><div class="scene-row-layout"><div class="scene-row-media">${sceneImageHTML(item)}<div class="scene-row-below"><div class="small-block scene"><strong>この場面で起きていること</strong><p>${escapeHTML(item.visible)}</p></div><div class="small-block bridge"><div class="info-subitem"><strong>日常的な水準</strong><p>${escapeHTML(bridge.daily)}</p></div><div class="info-subitem"><strong>支援を要する水準</strong><p>${escapeHTML(bridge.level)}</p></div></div></div></div><div class="columns"><div class="small-block support"><strong>支援の組み立て</strong><div class="info-subitem"><strong>職員の一手</strong><p>${escapeHTML(support)}</p></div><div class="info-subitem"><strong>声掛け例</strong><p>${escapeHTML(voice)}</p></div><div class="info-subitem"><strong>試すこと</strong><p>${escapeHTML(item.methods)}</p></div><div class="info-subitem"><strong>何を整えるか</strong><p>${escapeHTML(bridge.condition)}</p></div></div><div class="small-block strength"><strong>強みとして使える面</strong><p>${escapeHTML(item.strength)}</p></div></div></div></section>`;
         }).join('')}
       </div>
     </article>`;
