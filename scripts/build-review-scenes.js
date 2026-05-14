@@ -163,19 +163,35 @@ main {
   font-size: .92rem;
   line-height: 1.45;
 }
-.grid {
+.detail-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr));
   gap: 14px;
 }
-.card {
+.detail-scene {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 8px;
   overflow: hidden;
 }
-.card img { border-bottom: 1px solid var(--border); }
+.detail-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 42%) minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  padding: 14px;
+}
+.detail-image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--soft);
+}
 .body { padding: 13px 14px 15px; }
+.detail-info { display: grid; gap: 9px; }
 .eyebrow {
   display: flex;
   align-items: center;
@@ -198,9 +214,10 @@ h2 {
   line-height: 1.45;
 }
 .block {
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid var(--soft);
+  border: 1px solid var(--soft);
+  border-radius: 8px;
+  padding: 10px 11px;
+  background: #fff;
 }
 .block strong {
   display: block;
@@ -275,12 +292,42 @@ h2 {
   max-height: 80vh;
   object-fit: contain;
 }
+.modal-content {
+  display: grid;
+  grid-template-columns: minmax(0, 58%) minmax(280px, 1fr);
+  gap: 14px;
+  align-items: start;
+  padding: 14px;
+}
+.modal-image {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f8fafc;
+}
+.modal-info { display: grid; gap: 9px; }
+.modal-info h2 { margin-bottom: 0; }
+.modal-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 11px;
+  background: #fff;
+}
+.modal-card strong {
+  display: block;
+  color: var(--primary);
+  font-size: .83rem;
+  margin-bottom: 3px;
+}
+.modal-card p { margin: 0; font-size: .92rem; }
 @media (max-width: 760px) {
   .top-row { grid-template-columns: 1fr; }
   .controls { justify-content: stretch; }
   input, select { width: 100%; }
   main { padding: 14px 12px 22px; }
-  .grid { grid-template-columns: 1fr; }
+  .detail-layout,
+  .modal-content { grid-template-columns: 1fr; }
+  .detail-layout { padding: 10px; }
   .modal-backdrop { align-items: flex-end; padding: 0; }
   .modal { width: 100%; border-radius: 12px 12px 0 0; }
 }
@@ -313,7 +360,7 @@ h2 {
     <div id="listGrid" class="list-grid"></div>
   </section>
   <section id="view-detail" class="view">
-    <div id="detailGrid" class="grid"></div>
+    <div id="detailGrid" class="detail-list"></div>
   </section>
 </main>
 <div id="imageModal" class="modal-backdrop" aria-hidden="true">
@@ -365,7 +412,7 @@ function filteredScenes() {
 
 function listCard(item) {
   return \`<article class="list-card">
-    <button class="image-button" type="button" data-image-src="\${escapeHTML(item.image)}" data-image-title="\${escapeHTML(item.id)} \${escapeHTML(item.title)}">
+    <button class="image-button" type="button" data-scene-id="\${escapeHTML(item.id)}" data-image-src="\${escapeHTML(item.image)}" data-image-title="\${escapeHTML(item.id)} \${escapeHTML(item.title)}">
       <img src="\${escapeHTML(item.image)}" alt="\${escapeHTML(item.id)} \${escapeHTML(item.title)} の場面画像" loading="lazy" width="768" height="432">
     </button>
     <div class="list-body">
@@ -376,19 +423,24 @@ function listCard(item) {
 }
 
 function detailCard(item) {
-  return \`<article class="card" id="\${escapeHTML(item.id)}">
-    <img src="\${escapeHTML(item.image)}" alt="\${escapeHTML(item.id)} \${escapeHTML(item.title)} の場面画像" loading="lazy" width="768" height="432">
-    <div class="body">
-      <div class="eyebrow">
-        <span class="badge">\${escapeHTML(item.id)}</span>
-        <span class="badge">\${escapeHTML(item.cg)}</span>
-        <span>\${escapeHTML(item.cgTitle)}</span>
+  const tags = (item.tags || []).map((tag) => \`<span class="tag">\${escapeHTML(tag)}</span>\`).join('');
+  return \`<article class="detail-scene" id="\${escapeHTML(item.id)}">
+    <div class="detail-layout">
+      <img class="detail-image" src="\${escapeHTML(item.image)}" alt="\${escapeHTML(item.id)} \${escapeHTML(item.title)} の場面画像" loading="lazy" width="768" height="432">
+      <div class="detail-info">
+        <div>
+          <div class="eyebrow">
+            <span class="badge">\${escapeHTML(item.id)}</span>
+            <span class="badge">\${escapeHTML(item.cg)}</span>
+          </div>
+          <h2>\${escapeHTML(item.title)}</h2>
+        </div>
+        <div class="block"><strong>場面の説明</strong><p>\${escapeHTML(item.visible)}</p></div>
+        <div class="block"><strong>分類</strong><p>\${escapeHTML(item.cgTitle)}</p></div>
+        <div class="block"><strong>支援</strong><p>\${escapeHTML(item.methods)}</p></div>
+        <div class="block"><strong>強みとして使える面</strong><p>\${escapeHTML(item.strength)}</p></div>
+        <div class="block"><strong>タグ</strong><div class="tags">\${tags}</div></div>
       </div>
-      <h2>\${escapeHTML(item.title)}</h2>
-      <div class="block"><strong>詳細</strong><p>\${escapeHTML(item.visible)}</p></div>
-      <div class="block"><strong>支援</strong><p>\${escapeHTML(item.methods)}</p></div>
-      <div class="block"><strong>強みとして使える面</strong><p>\${escapeHTML(item.strength)}</p></div>
-      <div class="tags">\${(item.tags || []).map((tag) => \`<span class="tag">\${escapeHTML(tag)}</span>\`).join('')}</div>
     </div>
   </article>\`;
 }
@@ -406,9 +458,24 @@ function render() {
   detailGridEl.innerHTML = filtered.length ? filtered.map(detailCard).join('') : '<div class="empty">該当する場面がありません。</div>';
 }
 
-function openImageModal(src, title) {
+function modalContent(item, src, title) {
+  if (!item) return \`<div class="modal-image"><img src="\${escapeHTML(src)}" alt="\${escapeHTML(title || '場面イメージ')}"></div>\`;
+  return \`<div class="modal-content">
+    <div class="modal-image"><img src="\${escapeHTML(src)}" alt="\${escapeHTML(title || '場面イメージ')}"></div>
+    <div class="modal-info">
+      <h2>\${escapeHTML(item.title)}</h2>
+      <div class="eyebrow"><span class="badge">\${escapeHTML(item.id)}</span><span class="badge">\${escapeHTML(item.cg)}</span></div>
+      <div class="modal-card"><strong>場面の説明</strong><p>\${escapeHTML(item.visible)}</p></div>
+      <div class="modal-card"><strong>支援</strong><p>\${escapeHTML(item.methods)}</p></div>
+      <div class="modal-card"><strong>強みとして使える面</strong><p>\${escapeHTML(item.strength)}</p></div>
+    </div>
+  </div>\`;
+}
+
+function openImageModal(src, title, sceneId) {
   modalTitleEl.textContent = title || '場面イメージ';
-  modalBodyEl.innerHTML = \`<img src="\${escapeHTML(src)}" alt="\${escapeHTML(title || '場面イメージ')}">\`;
+  const item = sceneId ? SCENES.find((scene) => scene.id === sceneId) : null;
+  modalBodyEl.innerHTML = modalContent(item, src, title);
   modalEl.classList.add('is-open');
   modalEl.setAttribute('aria-hidden', 'false');
   modalCloseEl.focus();
@@ -426,7 +493,7 @@ cgFilterEl.addEventListener('change', render);
 document.body.addEventListener('click', (event) => {
   const imageButton = event.target.closest('[data-image-src]');
   if (imageButton && activeView === 'list') {
-    openImageModal(imageButton.dataset.imageSrc, imageButton.dataset.imageTitle);
+    openImageModal(imageButton.dataset.imageSrc, imageButton.dataset.imageTitle, imageButton.dataset.sceneId);
   }
 });
 modalCloseEl.addEventListener('click', closeImageModal);

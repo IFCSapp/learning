@@ -359,6 +359,9 @@ a:hover { text-decoration: underline; }
 .scene-table { display: grid; gap: 10px; }
 .scene-row { border: 1px solid var(--border-soft); background: #fff; border-radius: 14px; padding: 14px; }
 .scene-row h3 { margin: 0 0 8px; font-size: 1.05rem; }
+.scene-row-layout { display: grid; grid-template-columns: minmax(280px, 42%) minmax(0, 1fr); gap: 12px; align-items: start; }
+.scene-row-media { min-width: 0; }
+.scene-row .columns { grid-template-columns: 1fr; margin-top: 0; }
 .columns { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
 .small-block { border: 1px solid var(--border-soft); border-radius: 12px; padding: 10px; }
 .small-block p { margin: 4px 0 0; }
@@ -375,6 +378,7 @@ a:hover { text-decoration: underline; }
 .scene-visual figcaption a { font-weight: 800; }
 .detail-head + .scene-visual { margin-top: 0; }
 .scene-row .scene-visual { margin: 10px 0 12px; }
+.scene-row-media .scene-visual { margin: 0; }
 
 .plot-pane { position: relative; top: auto; max-height: none; overflow: hidden; padding: 16px; border-right: 1px solid var(--border-soft); background: var(--surface); border-radius: var(--radius) 0 0 var(--radius); }
 .plot-toolbar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
@@ -417,6 +421,13 @@ a:hover { text-decoration: underline; }
 .image-modal .plot-modal { width: min(980px, 96vw); }
 .image-modal-figure { margin: 0; background: #f8fafc; }
 .image-modal-figure img { display: block; width: 100%; height: auto; max-height: 78vh; object-fit: contain; }
+.image-modal-content { display: grid; grid-template-columns: minmax(0, 58%) minmax(280px, 1fr); gap: 14px; align-items: start; }
+.image-modal-content .image-modal-figure { border: 1px solid var(--border-soft); border-radius: 14px; overflow: hidden; }
+.image-modal-info { display: grid; gap: 10px; }
+.image-modal-info h3 { margin: 0; font-size: 1.05rem; line-height: 1.45; }
+.image-modal-card { border: 1px solid var(--border-soft); border-radius: 12px; padding: 11px 12px; background: #fff; }
+.image-modal-card strong { display: block; color: var(--primary); font-size: 0.84rem; margin-bottom: 5px; }
+.image-modal-card p { margin: 0; font-size: 0.92rem; line-height: 1.62; }
 .image-open-btn { border: 0; background: transparent; color: var(--primary); font-weight: 800; padding: 0; cursor: pointer; }
 .image-open-btn:hover { text-decoration: underline; }
 
@@ -662,6 +673,8 @@ a:hover { text-decoration: underline; }
   .cg-article { padding: 12px; margin-bottom: 12px; border-radius: 14px; }
   .cg-article-head { margin-bottom: 10px; }
   .cg-article-head h2 { font-size: 1.08rem; line-height: 1.45; }
+  .scene-row-layout,
+  .image-modal-content { grid-template-columns: 1fr; gap: 10px; }
   .cg-grid,
   .columns { grid-template-columns: 1fr; gap: 8px; }
   .cg-block,
@@ -1139,10 +1152,22 @@ function closePlotModal() {
   els.plotModalBackdrop.classList.remove('is-open');
   els.plotModalBackdrop.setAttribute('aria-hidden', 'true');
 }
-function openImageModal(src, title) {
+function imageModalInfoHTML(item) {
+  if(!item) return '';
+  return `<div class="image-modal-info">
+    <h3>${escapeHTML(item.title)} <span class="inline-code">${escapeHTML(item.id)}</span></h3>
+    <div class="image-modal-card"><strong>場面の説明</strong><p>${escapeHTML(item.visible)}</p></div>
+    <div class="image-modal-card"><strong>支援</strong><p>${escapeHTML(item.methods)}</p></div>
+    <div class="image-modal-card"><strong>強みとして使える面</strong><p>${escapeHTML(item.strength)}</p></div>
+  </div>`;
+}
+function openImageModal(src, title, sceneId) {
   if(!els.imageModalBackdrop || !els.imageModalContent) return;
   const label = title ? `${title}の場面イメージ` : '場面イメージ';
-  els.imageModalContent.innerHTML = `<figure class="image-modal-figure"><img src="${escapeHTML(src)}" alt="${escapeHTML(label)}"></figure>`;
+  const item = sceneId ? findItem(sceneId) : null;
+  els.imageModalContent.innerHTML = item
+    ? `<div class="image-modal-content"><figure class="image-modal-figure"><img src="${escapeHTML(src)}" alt="${escapeHTML(label)}"></figure>${imageModalInfoHTML(item)}</div>`
+    : `<figure class="image-modal-figure"><img src="${escapeHTML(src)}" alt="${escapeHTML(label)}"></figure>`;
   const titleEl = document.getElementById('imageModalTitle');
   if(titleEl) titleEl.textContent = label;
   els.imageModalBackdrop.classList.add('is-open');
@@ -1216,7 +1241,7 @@ function sceneGalleryCardHTML(item) {
   const src = SCENE_IMAGES[item?.id];
   if(!src) return '';
   return `<article class="gallery-card">
-    <button class="gallery-image-button" type="button" data-image-src="${escapeHTML(src)}" data-image-title="${escapeHTML(item.id)} ${escapeHTML(item.title)}">
+    <button class="gallery-image-button" type="button" data-scene-id="${escapeHTML(item.id)}" data-image-src="${escapeHTML(src)}" data-image-title="${escapeHTML(item.id)} ${escapeHTML(item.title)}">
       <img src="${escapeHTML(src)}" alt="${escapeHTML(item.title)}の場面イラスト" loading="lazy" width="768" height="432">
     </button>
     <div class="gallery-card-body">
@@ -1312,7 +1337,7 @@ function renderReading() {
       <div class="scene-table">
         ${items.map(item => {
           const bridge = bridgeFor(item);
-          return `<section class="scene-row" id="${escapeHTML(item.id)}"><h3>${escapeHTML(item.title)} <span class="inline-code">${escapeHTML(item.id)}</span></h3>${sceneImageHTML(item)}<div class="tag-row">${(item.tags || []).map(t => `<span class="tag">${escapeHTML(t)}</span>`).join('')}</div><div class="columns"><div class="small-block scene"><strong>場面</strong><p>${escapeHTML(item.visible)}</p></div><div class="small-block bridge"><strong>支援者の日常</strong><p>${escapeHTML(bridge.daily)}</p></div><div class="small-block level"><strong>支援を要する水準</strong><p>${escapeHTML(bridge.level)}</p></div><div class="small-block support"><strong>支援</strong><p>${escapeHTML(item.methods)}</p></div><div class="small-block strength"><strong>強みとして使える面</strong><p>${escapeHTML(item.strength)}</p></div></div></section>`;
+          return `<section class="scene-row" id="${escapeHTML(item.id)}"><h3>${escapeHTML(item.title)} <span class="inline-code">${escapeHTML(item.id)}</span></h3><div class="tag-row">${(item.tags || []).map(t => `<span class="tag">${escapeHTML(t)}</span>`).join('')}</div><div class="scene-row-layout"><div class="scene-row-media">${sceneImageHTML(item)}</div><div class="columns"><div class="small-block scene"><strong>場面</strong><p>${escapeHTML(item.visible)}</p></div><div class="small-block bridge"><strong>支援者の日常</strong><p>${escapeHTML(bridge.daily)}</p></div><div class="small-block level"><strong>支援を要する水準</strong><p>${escapeHTML(bridge.level)}</p></div><div class="small-block support"><strong>支援</strong><p>${escapeHTML(item.methods)}</p></div><div class="small-block strength"><strong>強みとして使える面</strong><p>${escapeHTML(item.strength)}</p></div></div></div></section>`;
         }).join('')}
       </div>
     </article>`;
@@ -1412,7 +1437,7 @@ function init() {
     const jump = e.target.closest('[data-jump]');
     if(jump) { jumpToExplore(jump.dataset.jump); return; }
     const imageBtn = e.target.closest('[data-image-src]');
-    if(imageBtn) { openImageModal(imageBtn.dataset.imageSrc, imageBtn.dataset.imageTitle); return; }
+    if(imageBtn) { openImageModal(imageBtn.dataset.imageSrc, imageBtn.dataset.imageTitle, imageBtn.dataset.sceneId); return; }
     const plotNode = e.target.closest('[data-plot-id]');
     if(plotNode) { openPlotModal(plotNode.dataset.plotId); return; }
     const btn = e.target.closest('[data-id][data-mode]');
