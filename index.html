@@ -47,11 +47,15 @@ button, input, select { font: inherit; }
 button { cursor: pointer; }
 a { color: var(--primary); text-decoration: none; }
 a:hover { text-decoration: underline; }
-.site-header { position: fixed; right: 16px; top: 16px; z-index: 90; background: transparent; border-bottom: 0; pointer-events: none; }
+.site-header { position: fixed; right: 16px; bottom: 16px; z-index: 90; background: transparent; border-bottom: 0; pointer-events: none; }
 .header-inner { margin: 0; padding: 0; display: flex; justify-content: flex-end; pointer-events: none; }
 .site-header h1 { margin: 0; font-size: clamp(1.35rem, 2.2vw, 1.9rem); line-height: 1.35; letter-spacing: 0; }
 .site-header p { margin: 0; color: var(--muted); max-width: 720px; font-size: 0.94rem; line-height: 1.65; }
 .app-shell { max-width: 1280px; margin: 0 auto; padding: 10px 20px 20px; }
+.nav-stack { display: grid; justify-items: end; gap: 6px; pointer-events: auto; }
+.nav-action-button { width: 44px; min-height: 36px; border: 1px solid rgba(220, 228, 236, 0.9); border-radius: 14px; background: rgba(255, 255, 255, 0.92); color: var(--text); box-shadow: 0 10px 26px rgba(15, 23, 42, 0.14); backdrop-filter: blur(12px); padding: 6px; display: flex; align-items: center; justify-content: center; font-size: 1rem; line-height: 1; font-weight: 800; }
+.nav-action-button:hover { background: var(--primary-soft); border-color: var(--primary-border); color: var(--primary); }
+.nav-action-button[hidden] { display: none; }
 .nav-menu { position: relative; pointer-events: auto; }
 .nav-menu-toggle { list-style: none; width: 44px; min-height: 54px; border: 1px solid rgba(220, 228, 236, 0.9); border-radius: 14px; background: rgba(255, 255, 255, 0.92); color: var(--text); box-shadow: 0 10px 26px rgba(15, 23, 42, 0.14); backdrop-filter: blur(12px); padding: 7px 9px; display: grid; justify-items: center; align-content: center; gap: 4px; font-size: 0.7rem; line-height: 1; font-weight: 800; cursor: pointer; }
 .nav-menu-toggle::-webkit-details-marker { display: none; }
@@ -65,8 +69,8 @@ a:hover { text-decoration: underline; }
 .nav-menu[open] .nav-icon-open, .nav-menu[open] .nav-label-open { display: none; }
 .nav-menu[open] .nav-icon-close, .nav-menu[open] .nav-label-close { display: block; }
 .nav-menu[open] .nav-menu-label { color: var(--primary); }
-.nav-tabs { position: absolute; top: calc(100% + 8px); right: 0; display: flex; flex-direction: column; align-items: stretch; gap: 6px; min-width: 0; padding: 7px; border: 1px solid rgba(220, 228, 236, 0.86); border-radius: 18px; background: rgba(255, 255, 255, 0.94); box-shadow: 0 12px 32px rgba(15, 23, 42, 0.16); backdrop-filter: blur(12px); pointer-events: none; opacity: 0; transform: translateY(-6px) scale(0.98); transform-origin: top right; transition: opacity .18s ease, transform .18s ease, visibility .18s ease; visibility: hidden; }
-.nav-menu[open]:not(.is-closing) .nav-tabs { opacity: 1; transform: translateY(0) scale(1); visibility: visible; pointer-events: auto; }
+.nav-tabs { position: absolute; right: calc(100% + 8px); bottom: 0; display: flex; flex-direction: column; align-items: stretch; gap: 6px; min-width: 0; padding: 7px; border: 1px solid rgba(220, 228, 236, 0.86); border-radius: 18px; background: rgba(255, 255, 255, 0.94); box-shadow: 0 12px 32px rgba(15, 23, 42, 0.16); backdrop-filter: blur(12px); pointer-events: none; opacity: 0; transform: translate(6px, 6px) scale(0.98); transform-origin: bottom right; transition: opacity .18s ease, transform .18s ease, visibility .18s ease; visibility: hidden; }
+.nav-menu[open]:not(.is-closing) .nav-tabs { opacity: 1; transform: translate(0, 0) scale(1); visibility: visible; pointer-events: auto; }
 .tab-btn { width: 112px; border: 1px solid transparent; background: transparent; color: var(--text); border-radius: 12px; padding: 8px 10px; font-size: 0.86rem; font-weight: 700; line-height: 1.2; white-space: nowrap; }
 .tab-btn[aria-selected="true"] { background: var(--primary-soft); border-color: var(--primary-border); color: var(--primary); }
 .tool-tab-btn { border-radius: 10px; background: #fbfaf5; border-color: #ded7ca; color: #5b4b36; }
@@ -566,14 +570,14 @@ a:hover { text-decoration: underline; }
   body { font-size: 16px; line-height: 1.68; background: #f5f7f8; }
   body.mobile-detail-open { overflow: hidden; }
 
-  .site-header { right: 10px; top: calc(10px + env(safe-area-inset-top)); bottom: auto; }
+  .site-header { right: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); top: auto; }
   .header-inner { padding: 0; justify-content: flex-end; }
   .app-shell { padding: 12px; max-width: 100%; }
 
   .nav-tabs {
     position: absolute;
-    top: calc(100% + 7px);
-    right: 0;
+    right: calc(100% + 7px);
+    bottom: 0;
     flex-direction: column;
     flex-wrap: nowrap;
     gap: 5px;
@@ -587,6 +591,7 @@ a:hover { text-decoration: underline; }
   .entry-chips::-webkit-scrollbar,
   .tag-filter-wrap::-webkit-scrollbar,
   .area-filter-chips::-webkit-scrollbar { display: none; }
+  .nav-action-button { width: 42px; min-height: 34px; padding: 6px; }
   .nav-menu-toggle { width: 42px; min-height: 52px; padding: 7px 8px; }
   .nav-icon-open, .nav-menu-label, .nav-icon-close { width: 22px; }
   .nav-icon-open span { width: 22px; }
@@ -792,19 +797,26 @@ a:hover { text-decoration: underline; }
 <body>
 <header class="site-header">
   <div class="header-inner">
-    <details id="navMenu" class="nav-menu">
-      <summary class="nav-menu-toggle">
-        <span class="nav-icon-open" aria-hidden="true"><span></span><span></span><span></span></span>
-        <span class="nav-icon-close" aria-hidden="true">❌</span>
-        <span class="nav-menu-label"><span class="nav-label-open">開く</span><span class="nav-label-close">閉じる</span></span>
-      </summary>
-      <nav class="nav-tabs" aria-label="表示の切り替え">
-        <button class="tab-btn" type="button" data-view="knowledge" aria-selected="true">基礎知識</button>
-        <button class="tab-btn" type="button" data-view="gallery" aria-selected="false">困り方一覧</button>
-        <button class="tab-btn" type="button" data-view="read" aria-selected="false">詳細説明</button>
-        <button class="tab-btn tool-tab-btn first-tool-tab" type="button" data-view="search" aria-selected="false">検索</button>
-      </nav>
-    </details>
+    <div class="nav-stack">
+      <button id="navTopButton" class="nav-action-button nav-top-button" type="button" aria-label="TOPへ戻る">🔝</button>
+      <button id="navPrevCategory" class="nav-action-button nav-category-button" type="button" aria-label="一つ前の大分類へ移動" hidden>⏫️</button>
+      <button id="navPrevScene" class="nav-action-button nav-scene-button" type="button" aria-label="一つ上の項目へ移動" hidden>🔼</button>
+      <button id="navNextScene" class="nav-action-button nav-scene-button" type="button" aria-label="一つ下の項目へ移動" hidden>🔽</button>
+      <button id="navNextCategory" class="nav-action-button nav-category-button" type="button" aria-label="一つ次の大分類へ移動" hidden>⏬️</button>
+      <details id="navMenu" class="nav-menu">
+        <summary class="nav-menu-toggle">
+          <span class="nav-icon-open" aria-hidden="true"><span></span><span></span><span></span></span>
+          <span class="nav-icon-close" aria-hidden="true">❌</span>
+          <span class="nav-menu-label"><span class="nav-label-open">開く</span><span class="nav-label-close">閉じる</span></span>
+        </summary>
+        <nav class="nav-tabs" aria-label="表示の切り替え">
+          <button class="tab-btn" type="button" data-view="knowledge" aria-selected="true">基礎知識</button>
+          <button class="tab-btn" type="button" data-view="gallery" aria-selected="false">困り方一覧</button>
+          <button class="tab-btn" type="button" data-view="read" aria-selected="false">詳細説明</button>
+          <button class="tab-btn tool-tab-btn first-tool-tab" type="button" data-view="search" aria-selected="false">検索</button>
+        </nav>
+      </details>
+    </div>
   </div>
 </header>
 <main class="app-shell">
@@ -869,29 +881,16 @@ a:hover { text-decoration: underline; }
   <section id="view-knowledge" class="view active">
     <div class="knowledge-document" id="knowledge-top">
 <header class="hero">
-      <p class="kicker">橋渡し教材</p>
       <h1>日常場面と対人支援をつなぐ</h1>
-      <p class="subtitle">日常場面の経験を、障害福祉の支援に翻訳するための橋渡し教材</p>
+      <p class="subtitle">日常場面の経験を障害福祉の支援に翻訳するための橋渡しとして</p>
       <aside class="callout callout-main"><p class="callout-label">中心メッセージ</p><p>対人支援とは、特別な人にだけ行う特殊な技術ではありません。人が思うように動きづらくなる条件を見つけ、動きやすくなるような条件へ組み替える、誰もが行っている日常的な営みです。ただし、精神障害・発達障害のある方の困難の強さを、支援者自身の一般的な感覚で過小評価してしまうことには注意が必要です。</p></aside>
     </header>
-    <nav class="toc" aria-label="基礎知識の目次">
-      <a href="#introduction">はじめに</a>
-      <a href="#purpose">目的</a>
-      <a href="#continuity">日常場面との関係</a>
-      <a href="#model">基本モデル</a>
-      <a href="#self-to-support">支援への翻訳</a>
-      <a href="#emergency">緊急時</a>
-      <a href="#phrases">声かけ</a>
-      <a href="#translation">翻訳例</a>
-      <a href="#good-bad">使い方</a>
-      <a href="#closing">まとめ</a>
-    </nav>
     <section id="introduction" class="content-section"><h2>はじめに</h2>
 <p>この教材は、支援者自身が日常で感じることや経験する場面を手がかりに、支援の組み立て方を考えるための教材です。</p>
 <p>障害名や診断名だけで利用者を理解するのではなく、どの場面で、何が影響して、どのように動きづらくなっているのかを見ていきます。そのうえで、刺激、情報量、手順、時間、相談方法、環境、休憩、回復などの条件を整え、本人が次の行動に移りやすくなる支援を考えます。</p>
 <p>ここで扱う困りごとは、誰にでも起こりうる日常のつまずきと地続きです。ただし、困難の強さ、続きやすさ、生活への影響、作業へ戻る難しさは人によって大きく異なります。「自分にもあるから同じ」と考えるのではなく、本人にとってどの程度の困難になっているかを丁寧に見ることを大切にします。</p>
 <p>この教材は、本人を責めたり、努力不足を探したりするためのものではありません。職員が、目の前の行動を「本人の問題」として片づけず、支援で変えられる条件を見つけるために使います。</p>
-<p>右上のメニューからは、現場でどのような困り方が出るかの場面一覧と場面の詳細説明を見ることができます。検索では、キーワードや困り方の種類から困り方の詳細を検索できます。基礎知識は、このページを指します。</p>
+<p>右下のメニューからは、現場でどのような困り方が出るかの場面一覧と場面の詳細説明を見ることができます。検索では、キーワードや困り方の種類から困り方の詳細を検索できます。基礎知識は、このページを指します。</p>
 </section>
     <section id="purpose" class="content-section"><h2>この教材の目的</h2>
 <p>この教材は、利用者を固定的なタイプに分類するための表ではありません。支援者が、自分自身の日常場面や仕事の中にもある苦手や困難さを感じる場面を手がかりにして、障害福祉における対人支援を理解するための橋渡し教材です。</p>
@@ -1439,6 +1438,11 @@ const state = {
 const $ = (id) => document.getElementById(id);
 const els = {
   navMenu: $('navMenu'),
+  navTopButton: $('navTopButton'),
+  navPrevCategory: $('navPrevCategory'),
+  navNextCategory: $('navNextCategory'),
+  navPrevScene: $('navPrevScene'),
+  navNextScene: $('navNextScene'),
   tabs: [...document.querySelectorAll('.tab-btn')],
   entryDetails: $('entryDetails'), entryChips: $('entryChips'), entryHint: $('entryHint'), entryCurrent: $('entryCurrent'), exploreList: $('exploreList'), exploreCount: $('exploreCount'), exploreDetail: $('exploreDetail'),
   searchModeButtons: [...document.querySelectorAll('[data-search-mode]')], keywordSearchPanel: $('keywordSearchPanel'), searchPlotPanel: $('searchPlotPanel'),
@@ -2271,7 +2275,7 @@ function sceneThumbHTML(item) {
 function sceneGalleryCardHTML(item) {
   const src = SCENE_IMAGES[item?.id];
   if(!src) return '';
-  return `<article class="gallery-card">
+  return `<article class="gallery-card" id="gallery-${escapeHTML(item.id)}">
     <button class="gallery-image-button" type="button" data-scene-id="${escapeHTML(item.id)}" data-image-src="${escapeHTML(src)}" data-image-title="${escapeHTML(item.id)} ${escapeHTML(item.title)}">
       <img src="${escapeHTML(src)}" alt="${escapeHTML(item.title)}の場面イラスト" loading="lazy" width="768" height="432">
     </button>
@@ -2400,6 +2404,7 @@ function setView(name) {
   state.activeView = name;
   document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + name));
   els.tabs.forEach(btn => btn.setAttribute('aria-selected', btn.dataset.view === name ? 'true' : 'false'));
+  updateSceneNavButtons();
 }
 function jumpToExplore(id) {
   closePlotModal();
@@ -2457,6 +2462,74 @@ function closeNavMenu(animated = true) {
     els.navMenu.classList.remove('is-closing');
   }, 180);
 }
+function updateSceneNavButtons() {
+  const show = state.activeView === 'knowledge' || state.activeView === 'gallery' || state.activeView === 'read';
+  const showCategory = state.activeView === 'read';
+  if(els.navPrevScene) els.navPrevScene.hidden = !show;
+  if(els.navNextScene) els.navNextScene.hidden = !show;
+  if(els.navPrevCategory) els.navPrevCategory.hidden = !showCategory;
+  if(els.navNextCategory) els.navNextCategory.hidden = !showCategory;
+}
+function goToTop() {
+  closeNavMenu();
+  window.setTimeout(() => {
+    const top = state.activeView === 'knowledge'
+      ? document.getElementById('knowledge-top')
+      : document.getElementById('view-' + state.activeView);
+    if(top) top.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    else window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 20);
+}
+function currentSceneBlocks() {
+  if(state.activeView === 'knowledge') return [...document.querySelectorAll('#knowledge-top .hero, #knowledge-top .content-section')];
+  if(state.activeView === 'gallery') return [...document.querySelectorAll('#galleryGrid .gallery-card')];
+  if(state.activeView === 'read') return [...document.querySelectorAll('#readingContent .cg-article, #readingContent .scene-row')];
+  return [];
+}
+function currentCategoryBlocks() {
+  if(state.activeView !== 'read') return [];
+  return [...document.querySelectorAll('#readingContent .cg-article')];
+}
+function currentSceneIndex(blocks) {
+  if(!blocks.length) return -1;
+  const line = Math.min(window.innerHeight * 0.42, 320);
+  let index = -1;
+  for(let i = 0; i < blocks.length; i++) {
+    const rect = blocks[i].getBoundingClientRect();
+    if(rect.top <= line) index = i;
+  }
+  return index;
+}
+function scrollToNavBlock(target) {
+  if(!target) return;
+  target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const focusTarget = target.querySelector('button, h1, h2, h3, .gallery-title') || target;
+  if(focusTarget) {
+    focusTarget.setAttribute('tabindex', '-1');
+    window.setTimeout(() => focusTarget.focus({ preventScroll: true }), 240);
+  }
+}
+function moveScene(direction) {
+  const blocks = currentSceneBlocks();
+  if(!blocks.length) return;
+  closeNavMenu();
+  const current = currentSceneIndex(blocks);
+  const next = Math.max(0, Math.min(blocks.length - 1, current + direction));
+  scrollToNavBlock(blocks[next]);
+}
+function moveCategory(direction) {
+  const blocks = currentCategoryBlocks();
+  if(!blocks.length) return;
+  closeNavMenu();
+  const currentTop = Math.min(window.innerHeight * 0.42, 320);
+  let current = 0;
+  for(let i = 0; i < blocks.length; i++) {
+    const rect = blocks[i].getBoundingClientRect();
+    if(rect.top <= currentTop) current = i;
+  }
+  const next = Math.max(0, Math.min(blocks.length - 1, current + direction));
+  scrollToNavBlock(blocks[next]);
+}
 function init() {
   if(els.searchCg) {
     for(const cg of DATA.cgs) {
@@ -2469,6 +2542,11 @@ function init() {
     btn.addEventListener('click', () => { state.searchTags.has(tag) ? state.searchTags.delete(tag) : state.searchTags.add(tag); state.searchSelected = null; renderSearch(); });
     els.searchTags.appendChild(btn);
   }
+  if(els.navTopButton) els.navTopButton.addEventListener('click', goToTop);
+  if(els.navPrevCategory) els.navPrevCategory.addEventListener('click', () => moveCategory(-1));
+  if(els.navNextCategory) els.navNextCategory.addEventListener('click', () => moveCategory(1));
+  if(els.navPrevScene) els.navPrevScene.addEventListener('click', () => moveScene(-1));
+  if(els.navNextScene) els.navNextScene.addEventListener('click', () => moveScene(1));
   els.tabs.forEach(btn => btn.addEventListener('click', () => { setView(btn.dataset.view); closeNavMenu(); }));
   els.entryChips.addEventListener('click', e => {
     const btn = e.target.closest('[data-entry]');
@@ -2523,6 +2601,7 @@ function init() {
   renderSearch();
   renderPlot();
   renderFilter();
+  updateSceneNavButtons();
 }
 init();
 </script>
