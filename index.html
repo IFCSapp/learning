@@ -36,6 +36,9 @@
   --strength-bg: #f7f4e8;
   --strength-border: #e2d6ad;
   --strength-head: #685b1d;
+  --question-bg: #f5f3ff;
+  --question-border: #d8ccff;
+  --question-head: #5b3db6;
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -44,14 +47,17 @@ button, input, select { font: inherit; }
 button { cursor: pointer; }
 a { color: var(--primary); text-decoration: none; }
 a:hover { text-decoration: underline; }
-.site-header { position: sticky; top: 0; z-index: 90; background: rgba(255, 255, 255, 0.96); border-bottom: 1px solid var(--border); backdrop-filter: blur(10px); }
-.header-inner { max-width: 1280px; margin: 0 auto; padding: 12px 20px; display: block; }
+.site-header { position: sticky; top: 10px; z-index: 90; background: transparent; border-bottom: 0; pointer-events: none; }
+.header-inner { max-width: 1280px; margin: 0 auto; padding: 8px 20px 0; display: flex; justify-content: center; pointer-events: none; }
 .site-header h1 { margin: 0; font-size: clamp(1.35rem, 2.2vw, 1.9rem); line-height: 1.35; letter-spacing: 0; }
 .site-header p { margin: 0; color: var(--muted); max-width: 720px; font-size: 0.94rem; line-height: 1.65; }
-.app-shell { max-width: 1280px; margin: 0 auto; padding: 14px 20px 20px; }
-.nav-tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; min-width: 0; }
-.tab-btn { border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 999px; padding: 10px 16px; font-weight: 700; white-space: nowrap; }
+.app-shell { max-width: 1280px; margin: 0 auto; padding: 10px 20px 20px; }
+.nav-tabs { display: inline-flex; flex-wrap: wrap; justify-content: center; gap: 6px; min-width: 0; padding: 6px; border: 1px solid rgba(220, 228, 236, 0.86); border-radius: 999px; background: rgba(255, 255, 255, 0.88); box-shadow: 0 10px 28px rgba(15, 23, 42, 0.12); backdrop-filter: blur(12px); pointer-events: auto; }
+.tab-btn { border: 1px solid transparent; background: transparent; color: var(--text); border-radius: 999px; padding: 7px 12px; font-size: 0.9rem; font-weight: 700; line-height: 1.2; white-space: nowrap; }
 .tab-btn[aria-selected="true"] { background: var(--primary-soft); border-color: var(--primary-border); color: var(--primary); }
+.tool-tab-btn { border-radius: 10px; background: #fbfaf5; border-color: #ded7ca; color: #5b4b36; }
+.tool-tab-btn[aria-selected="true"] { background: #f3f1ec; border-color: #c7bca8; color: #493b28; box-shadow: inset 3px 0 0 #8a6f45; }
+.tool-tab-btn.first-tool-tab { margin-left: 10px; }
 .view { display: none; }
 .view.active { display: block; }
 .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
@@ -123,6 +129,8 @@ a:hover { text-decoration: underline; }
 .info-block.condition h3 { color: var(--condition-head); }
 .info-block.support { background: var(--support-bg); border-color: var(--support-border); }
 .info-block.support h3 { color: var(--support-head); }
+.info-block.question { background: var(--question-bg); border-color: var(--question-border); }
+.info-block.question h3 { color: var(--question-head); }
 .info-block.strength { background: var(--strength-bg); border-color: var(--strength-border); }
 .info-block.strength h3 { color: var(--strength-head); }
 .related-list { display: grid; gap: 8px; }
@@ -134,8 +142,19 @@ a:hover { text-decoration: underline; }
 .search-input-wrap { display: flex; align-items: center; flex: 1; min-width: 260px; background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 0 12px; }
 .search-input-wrap input { border: 0; outline: 0; width: 100%; min-height: 44px; background: transparent; }
 .clear-btn { border: 1px solid var(--border); background: var(--surface-soft); border-radius: 12px; padding: 10px 14px; min-height: 44px; }
+.keyword-controls { display: grid; grid-template-columns: auto minmax(280px, 1fr) minmax(240px, 320px) auto; gap: 10px; align-items: center; }
+.keyword-controls .control-label { white-space: nowrap; }
+.keyword-controls .search-input-wrap { min-width: 0; }
+.keyword-controls .select { width: 100%; min-width: 0; }
+.keyword-controls .clear-btn { white-space: nowrap; }
 .search-intro { padding: 16px; border-bottom: 1px solid var(--border-soft); color: var(--muted); }
-.tag-filter-wrap { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border-soft); }
+.search-mode-tabs { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border-soft); background: #fbfcfd; }
+.search-mode-btn { border: 1px solid var(--border); background: #fff; color: var(--text); border-radius: 999px; padding: 10px 14px; font-weight: 800; }
+.search-mode-btn[aria-selected="true"] { background: var(--primary-soft); border-color: var(--primary-border); color: var(--primary); }
+.search-mode-panel[hidden] { display: none; }
+.tag-filter-wrap { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--border-soft); }
+.tag-filter-label { margin-right: 2px; }
+.search-plot-panel { border-bottom: 1px solid var(--border-soft); background: #fff; }
 .highlight { background: #fff0bd; border-radius: 4px; padding: 0 2px; }
 .reading-section .section-note { color: var(--muted); margin: 0 0 16px; }
 .knowledge-document {
@@ -374,6 +393,9 @@ a:hover { text-decoration: underline; }
 .small-block.level { background: var(--level-bg); border-color: var(--level-border); }
 .small-block.support { background: var(--support-bg); border-color: var(--support-border); }
 .small-block.condition { background: var(--condition-bg); border-color: var(--condition-border); }
+.small-block.question { background: var(--question-bg); border-color: var(--question-border); }
+.question-list { margin: 4px 0 0; padding-left: 1.25em; }
+.question-list li { margin: 4px 0; }
 .small-block.strength { background: var(--strength-bg); border-color: var(--strength-border); }
 .footer { color: var(--muted); text-align: center; font-size: 0.85rem; padding: 24px 0; }
 .scene-visual { margin: 0; border: 1px solid var(--border-soft); border-radius: 14px; overflow: hidden; background: #eef2f6; }
@@ -433,6 +455,10 @@ a:hover { text-decoration: underline; }
 .image-modal-card { border: 1px solid var(--border-soft); border-radius: 12px; padding: 11px 12px; background: #fff; }
 .image-modal-card strong { display: block; color: var(--primary); font-size: 0.84rem; margin-bottom: 5px; }
 .image-modal-card p { margin: 0; font-size: 0.92rem; line-height: 1.62; }
+.image-modal-detail-link { display: inline-flex; align-items: center; justify-content: center; width: fit-content; border: 1px solid var(--primary-border); background: var(--primary-soft); color: var(--primary); border-radius: 999px; padding: 9px 13px; font-weight: 800; cursor: pointer; }
+.image-modal-detail-link:hover { background: #dfeeea; }
+.image-modal-detail-panel .detail-panel { max-width: none; }
+.image-modal-detail-panel .mobile-detail-actions { display: none; }
 .image-open-btn { border: 0; background: transparent; color: var(--primary); font-weight: 800; padding: 0; cursor: pointer; }
 .image-open-btn:hover { text-decoration: underline; }
 
@@ -505,16 +531,18 @@ a:hover { text-decoration: underline; }
   body { font-size: 16px; line-height: 1.68; background: #f5f7f8; }
   body.mobile-detail-open { overflow: hidden; }
 
-  .header-inner { padding: 8px 14px; }
+  .site-header { top: 6px; }
+  .header-inner { padding: 6px 10px 0; justify-content: flex-start; }
   .app-shell { padding: 12px; max-width: 100%; }
 
   .nav-tabs {
     flex-wrap: nowrap;
-    gap: 8px;
+    gap: 5px;
     overflow-x: auto;
     justify-content: flex-start;
-    margin: 0 -14px;
-    padding: 2px 14px;
+    max-width: calc(100vw - 20px);
+    padding: 5px;
+    border-radius: 999px;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
@@ -522,7 +550,7 @@ a:hover { text-decoration: underline; }
   .entry-chips::-webkit-scrollbar,
   .tag-filter-wrap::-webkit-scrollbar,
   .area-filter-chips::-webkit-scrollbar { display: none; }
-  .tab-btn { flex: 0 0 auto; min-height: 42px; padding: 9px 14px; font-size: 0.92rem; box-shadow: 0 1px 2px rgba(15,23,42,0.04); }
+  .tab-btn { flex: 0 0 auto; min-height: 34px; padding: 7px 10px; font-size: 0.84rem; box-shadow: none; }
   .knowledge-document {
     margin: 0 -12px;
     padding: 12px 12px 40px;
@@ -550,6 +578,7 @@ a:hover { text-decoration: underline; }
 
   .panel { border-radius: 14px; box-shadow: none; overflow: hidden; }
   .controls-simple { padding: 12px; display: grid; grid-template-columns: 1fr; gap: 8px; align-items: stretch; }
+  .keyword-controls { grid-template-columns: 1fr; }
   .control-label { font-size: 0.82rem; }
   .select,
   .search-input-wrap,
@@ -715,12 +744,9 @@ a:hover { text-decoration: underline; }
   <div class="header-inner">
     <nav class="nav-tabs" aria-label="表示の切り替え">
       <button class="tab-btn" type="button" data-view="knowledge" aria-selected="true">基礎知識</button>
-      <button class="tab-btn" type="button" data-view="gallery" aria-selected="false">一覧を見る</button>
-      <button class="tab-btn" type="button" data-view="read" aria-selected="false">詳細を見る</button>
-      <button class="tab-btn" type="button" data-view="explore" aria-selected="false">場面から探す</button>
-      <button class="tab-btn" type="button" data-view="plot" aria-selected="false">困り方から探す</button>
-      <button class="tab-btn" type="button" data-view="search" aria-selected="false">支援方法から探す</button>
-      <button class="tab-btn" type="button" data-view="filter" aria-selected="false">分類でしぼる</button>
+      <button class="tab-btn" type="button" data-view="gallery" aria-selected="false">困り方一覧</button>
+      <button class="tab-btn" type="button" data-view="read" aria-selected="false">詳細説明</button>
+      <button class="tab-btn tool-tab-btn first-tool-tab" type="button" data-view="search" aria-selected="false">検索</button>
     </nav>
   </div>
 </header>
@@ -748,54 +774,38 @@ a:hover { text-decoration: underline; }
 
   <section id="view-search" class="view search-layout">
     <div class="panel">
-      <div class="search-intro">支援方法や声かけのヒントから探す補助検索です。キーワード、分類、タグのいずれかを指定すると、関係する場面が表示されます。</div>
-      <div class="controls-simple">
-        <div class="search-input-wrap"><input id="searchInput" type="search" placeholder="例：相談、作業に戻る、疲労、CS035" autocomplete="off"></div>
-        <button id="clearSearch" class="clear-btn" type="button">条件をクリア</button>
+      <div class="search-mode-tabs" role="tablist" aria-label="検索方法">
+        <button class="search-mode-btn" type="button" data-search-mode="keyword" aria-selected="true">キーワードから探す</button>
+        <button class="search-mode-btn" type="button" data-search-mode="plot" aria-selected="false">エリアから探す</button>
       </div>
-      <div class="tag-filter-wrap" id="searchTags" aria-label="タグでしぼる"></div>
-      <div class="two-pane">
-        <aside class="left-pane" aria-label="検索結果">
-          <div id="searchCount" class="list-status"></div>
-          <ul id="searchList" class="scene-list"></ul>
-        </aside>
-        <section id="searchDetail" class="right-pane" aria-live="polite"></section>
-      </div>
-    </div>
-  </section>
-
-  <section id="view-plot" class="view plot-layout">
-    <div class="panel">
-      <div class="search-intro">困り方を4つのエリアから選びます。近いエリアの場面カードを開くと、支援の組み立て4項目を確認できます。</div>
-      <div class="area-filter-chips" id="plotAreaChips" aria-label="エリアでしぼる"></div>
-      <div class="plot-full">
-        <div class="plot-full-head">
-          <p class="plot-note">エリアは厳密な診断ではなく、支援者が近い場面を見つけるための入口です。コードや分類は補助情報として小さく表示します。</p>
-          <p id="plotCount" class="plot-note"></p>
+      <section id="keywordSearchPanel" class="search-mode-panel">
+        <div class="controls-simple keyword-controls">
+          <label class="control-label" for="searchInput">キーワード：</label>
+          <div class="search-input-wrap"><input id="searchInput" type="search" placeholder="例：相談、作業に戻る、疲労、CS035" autocomplete="off"></div>
+          <select id="searchCg" class="select"><option value="all">すべての分類</option></select>
+          <button id="clearSearch" class="clear-btn" type="button">条件をクリア</button>
         </div>
-        <div class="area-map-shell">
-          <div id="areaMap" class="area-map-grid" aria-label="4エリア地図"></div>
+        <div class="tag-filter-wrap" id="searchTags" aria-label="タグでしぼる"><span class="control-label tag-filter-label">タグ</span></div>
+        <div class="two-pane">
+          <aside class="left-pane" aria-label="検索結果">
+            <div id="searchCount" class="list-status"></div>
+            <ul id="searchList" class="scene-list"></ul>
+          </aside>
+          <section id="searchDetail" class="right-pane" aria-live="polite"></section>
         </div>
-        <p class="area-help">複数のエリアにまたがる場面もあります。迷うときは、今いちばん目立っている困りごとから選んでください。</p>
-      </div>
-    </div>
-  </section>
-
-  <section id="view-filter" class="view">
-    <div class="panel">
-      <div class="search-intro">分類名やコードが分かっているときの補助フィルターです。分類を選ぶと、関連する場面だけを一覧できます。</div>
-      <div class="controls-simple">
-        <label class="control-label" for="globalCg">分類でしぼる</label>
-        <select id="globalCg" class="select"><option value="all">すべての分類</option></select>
-        <button id="clearGlobalCg" class="clear-btn" type="button">分類をクリア</button>
-      </div>
-      <div class="two-pane">
-        <aside class="left-pane" aria-label="分類でしぼった場面">
-          <div id="filterCount" class="list-status"></div>
-          <ul id="filterList" class="scene-list"></ul>
-        </aside>
-        <section id="filterDetail" class="right-pane" aria-live="polite"></section>
-      </div>
+      </section>
+      <section id="searchPlotPanel" class="search-mode-panel search-plot-panel plot-layout" hidden>
+        <div class="area-filter-chips" id="plotAreaChips" aria-label="エリアでしぼる"></div>
+        <div class="plot-full">
+          <div class="plot-full-head">
+            <p id="plotCount" class="plot-note"></p>
+          </div>
+          <div class="area-map-shell">
+            <div id="areaMap" class="area-map-grid" aria-label="4エリア地図"></div>
+          </div>
+          <p class="area-help">複数のエリアにまたがる場面もあります。迷うときは、今いちばん目立っている困りごとから選んでください。</p>
+        </div>
+      </section>
     </div>
   </section>
 
@@ -858,12 +868,10 @@ a:hover { text-decoration: underline; }
   </section>
 
   <section id="view-read" class="view reading-section">
-    <p class="section-note">分類ごとの本文です。研修で全体を読み込むときに使います。</p>
     <div id="readingContent"></div>
   </section>
 
   <section id="view-gallery" class="view gallery-section">
-    <p class="section-note">場面画像だけを一覧します。画像をクリックすると大きく確認できます。</p>
     <div id="galleryGrid" class="gallery-grid"></div>
   </section>
 
@@ -1345,11 +1353,13 @@ const SCENE_IMAGES = {
   CS064: 'assets/scenes/cs064.webp'
 };
 const state = {
-  activeView: 'explore',
+  activeView: 'knowledge',
   filterCg: 'all',
   exploreEntry: 'all',
   exploreSelected: DATA.items[0]?.id || null,
+  searchMode: 'keyword',
   searchQuery: '',
+  searchCg: 'all',
   searchTags: new Set(),
   searchSelected: null,
   plotArea: 'all',
@@ -1360,7 +1370,8 @@ const $ = (id) => document.getElementById(id);
 const els = {
   tabs: [...document.querySelectorAll('.tab-btn')],
   entryDetails: $('entryDetails'), entryChips: $('entryChips'), entryHint: $('entryHint'), entryCurrent: $('entryCurrent'), exploreList: $('exploreList'), exploreCount: $('exploreCount'), exploreDetail: $('exploreDetail'),
-  searchInput: $('searchInput'), clearSearch: $('clearSearch'), searchTags: $('searchTags'), searchList: $('searchList'), searchCount: $('searchCount'), searchDetail: $('searchDetail'),
+  searchModeButtons: [...document.querySelectorAll('[data-search-mode]')], keywordSearchPanel: $('keywordSearchPanel'), searchPlotPanel: $('searchPlotPanel'),
+  searchInput: $('searchInput'), searchCg: $('searchCg'), clearSearch: $('clearSearch'), searchTags: $('searchTags'), searchList: $('searchList'), searchCount: $('searchCount'), searchDetail: $('searchDetail'),
   plotAreaChips: $('plotAreaChips'), areaMap: $('areaMap'), plotCount: $('plotCount'), plotModalBackdrop: $('plotModalBackdrop'), plotModalContent: $('plotModalContent'), plotModalClose: $('plotModalClose'),
   imageModalBackdrop: $('imageModalBackdrop'), imageModalContent: $('imageModalContent'), imageModalClose: $('imageModalClose'),
   globalCg: $('globalCg'), clearGlobalCg: $('clearGlobalCg'), filterList: $('filterList'), filterCount: $('filterCount'), filterDetail: $('filterDetail'),
@@ -1453,6 +1464,456 @@ const LEVEL_BY_ID = {
   CS062: "成果が先にある作業で今日の一歩の意味を感じにくく、始めにくい状態です。短い作業単位と、終えたことが分かる記録や声かけが必要です。",
   CS064: "深く集中すると高い成果が出る一方で、休憩、終了、次の予定への切り替えが難しい状態です。終了合図、作業上限、切り替え前の保存手順を決める必要があります。"
 };
+const QUESTIONS_BY_ID = {
+  "CS001": {
+    "prompt": "今の場面では、何が一番気になって作業から注意がそれましたか。音、人の動き、通知、席の位置のうち、近いものはありますか。",
+    "followups": [
+      "作業へ戻ろうとしたとき、どこで戻りにくくなりましたか。",
+      "作業へ戻るために、画面、メモ、チェックリストなど、何が見えると戻りやすそうですか。"
+    ]
+  },
+  "CS002": {
+    "prompt": "集中が落ちたのは、どの時間帯やどの作業の後でしたか。",
+    "followups": [
+      "集中が続いていた時間は、だいたい何分くらいでしたか。",
+      "休憩を入れるなら、作業の前、途中、後のどこがよさそうですか。"
+    ]
+  },
+  "CS003": {
+    "prompt": "中断された後、元の作業へ戻るときに、何が分からなくなりましたか。",
+    "followups": [
+      "中断の前にしていた作業は、どこまで進んでいましたか。",
+      "作業へ戻る目印として、メモ、開いていた画面、チェック欄のどれがあるとよさそうですか。"
+    ]
+  },
+  "CS004": {
+    "prompt": "聞く、見る、書く、入力することのうち、どれが重なったときに抜けが出やすかったですか。",
+    "followups": [
+      "一つずつ進めるとしたら、最初に分けたい作業はどれですか。",
+      "メモ役、操作する人、確認する人を分けるとしたら、どこを分けると楽になりそうですか。"
+    ]
+  },
+  "CS005": {
+    "prompt": "どの細かい部分が気になって、作業全体が進みにくくなりましたか。",
+    "followups": [
+      "今の段階で「ここまでできていれば十分」と言える基準は、どのあたりですか。",
+      "細かく確認する時間を区切るなら、何分くらいが現実的ですか。"
+    ]
+  },
+  "CS006": {
+    "prompt": "人の動き、視線、声、距離のうち、どれが一番気になりましたか。",
+    "followups": [
+      "どの席や向きだと、人の動きが入りにくくなりそうですか。",
+      "人が近くにいる場面で、作業に集中しやすい距離や声かけのタイミングはありますか。"
+    ]
+  },
+  "CS047": {
+    "prompt": "音、光、におい、温度、服の感触のうち、今いちばんつらさにつながっていたものはどれですか。",
+    "followups": [
+      "その刺激があると、考える、聞く、話す、動くことのどれがしにくくなりますか。",
+      "席、照明、休憩場所、イヤーマフなど、調整できるものは何がありそうですか。"
+    ]
+  },
+  "CS007": {
+    "prompt": "口頭で聞いた内容のうち、席に戻ったあとに抜けやすかったのは、手順、期限、条件、持ち物のどれですか。",
+    "followups": [
+      "説明を聞いている時点では、どこまで分かっていましたか。",
+      "メモ、チェックリスト、画面上の指示のうち、どれがあると確認しやすそうですか。"
+    ]
+  },
+  "CS008": {
+    "prompt": "条件、例外、順番のうち、どの部分が抜けやすかったですか。",
+    "followups": [
+      "「いつも通りのところ」と「今回だけ違うところ」は、どこでしたか。",
+      "条件を表やチェック欄に分けるとしたら、どの形が見やすそうですか。"
+    ]
+  },
+  "CS009": {
+    "prompt": "次にすることとして、会議、提出、報告、持ち物のうち、どれが頭の中から抜けやすかったですか。",
+    "followups": [
+      "その予定や行動を思い出すきっかけは、どこに置くと見つけやすいですか。",
+      "リマインダー、予定表、終業前チェックのうち、どれなら続けやすそうですか。"
+    ]
+  },
+  "CS010": {
+    "prompt": "作業を進めている途中で、目的、完成形、終わりの基準のうち、どれが見えにくくなりましたか。",
+    "followups": [
+      "最初に何を完成させる作業だと分かると、進めやすそうですか。",
+      "完了基準を一文で書くとしたら、どんな言葉になりそうですか。"
+    ]
+  },
+  "CS011": {
+    "prompt": "担当者名、略語、制度名、アプリ名のうち、どれが抜けると質問や報告が止まりやすいですか。",
+    "followups": [
+      "よく使う言葉を一覧にするなら、どの言葉から載せると役立ちそうですか。",
+      "名前や略語が分からないとき、誰に、どの言い方で確認できそうですか。"
+    ]
+  },
+  "CS012": {
+    "prompt": "「あとでやる」と思っていた行動は、どのタイミングで思い出しにくくなりましたか。",
+    "followups": [
+      "その行動を思い出すきっかけは、時間、場所、作業終了時のどれに結びつけるとよさそうですか。",
+      "忘れにくくするために、予定表、付せん、スマートフォン通知のどれが使いやすそうですか。"
+    ]
+  },
+  "CS013": {
+    "prompt": "作業を始める前に止まったのは、ファイルを開く、1行書く、声をかける、準備する、のどのあたりでしたか。",
+    "followups": [
+      "30秒から3分でできる最初の一手にするとしたら、何から始められそうですか。",
+      "始める前に必要な情報や道具は、何が足りていませんでしたか。"
+    ]
+  },
+  "CS014": {
+    "prompt": "やることが複数ある中で、どれから始めるかを決めにくかった理由に近いものはありますか。",
+    "followups": [
+      "先に終わらせたいもの、締切が近いもの、すぐできるものを分けると、どれが見えてきますか。",
+      "手順を一緒に並べるとしたら、最初の3つは何になりそうですか。"
+    ]
+  },
+  "CS015": {
+    "prompt": "今ある作業の中で、今日必ず必要なもの、できれば進めるもの、後でよいものは分けられそうですか。",
+    "followups": [
+      "目についた作業から始めたくなるとき、締切や重要度をどこで確認できるとよさそうですか。",
+      "迷ったときに確認する相手や基準は、先に決めておけそうですか。"
+    ]
+  },
+  "CS016": {
+    "prompt": "どこまで確認したら提出や終了にできるか、今の作業では何が目安になりそうですか。",
+    "followups": [
+      "確認回数や修正時間に上限をつけるなら、どのくらいが現実的ですか。",
+      "「ここまでできていれば相談してよい」と言える状態は、どんな状態ですか。"
+    ]
+  },
+  "CS017": {
+    "prompt": "ミスを見つけたあと、確認する場所、相談する相手、直す順番のうち、どこで止まりましたか。",
+    "followups": [
+      "全部やり直す前に、まず見直せそうな一か所はどこですか。",
+      "ミスが出たとき用の手順を作るなら、最初の一文は何になりそうですか。"
+    ]
+  },
+  "CS018": {
+    "prompt": "思ったより時間がかかったのは、準備、確認、修正、相談待ちのどこでしたか。",
+    "followups": [
+      "見積もった時間と実際にかかった時間は、どのくらい違いましたか。",
+      "次に同じ作業をするとき、余裕時間をどのくらい足すとよさそうですか。"
+    ]
+  },
+  "CS025": {
+    "prompt": "説明や作業のペースが速い場面で、聞く、理解する、メモする、操作するのうち、どこが追いつきにくかったですか。",
+    "followups": [
+      "説明を区切るなら、どのタイミングで止めてもらえると確認しやすいですか。",
+      "資料、録画、メモ、再説明のうち、後から確認できると助かるものはどれですか。"
+    ]
+  },
+  "CS026": {
+    "prompt": "説明や資料の中で、前半、真ん中、後半のどこから抜けやすくなりましたか。",
+    "followups": [
+      "一度に確認する量を減らすなら、何項目ずつがよさそうですか。",
+      "要点を一つずつ確認するなら、どんな見せ方が分かりやすいですか。"
+    ]
+  },
+  "CS027": {
+    "prompt": "長い文章や入力フォームを見たとき、読む場所、書く順番、必要な情報のうち、何が分かりにくかったですか。",
+    "followups": [
+      "最初に見る場所を一つだけ決めるなら、どこから始めるとよさそうですか。",
+      "見本、記入例、チェック欄のうち、どれがあると進めやすそうですか。"
+    ]
+  },
+  "CS028": {
+    "prompt": "その場ですぐ答えにくかったのは、考える時間、言葉を選ぶ時間、情報を確認する時間のどれが足りなかったからですか。",
+    "followups": [
+      "後から返答できる形にするなら、メモ、チャット、次回面談のどれが使いやすそうですか。",
+      "即答しにくいときに使える一言を用意するとしたら、どんな言い方がよさそうですか。"
+    ]
+  },
+  "CS029": {
+    "prompt": "表、画面、メニュー、タブの中で、どこから探せばよいか分かりにくかった場所はありますか。",
+    "followups": [
+      "見る場所を丸や番号で示すとしたら、どこに印があると探しやすいですか。",
+      "不要な表示を減らすなら、どの情報を隠すと見やすくなりそうですか。"
+    ]
+  },
+  "CS030": {
+    "prompt": "聞く、見る、入力することが重なったとき、どの動きが一番抜けやすかったですか。",
+    "followups": [
+      "説明を聞く時間、画面を見る時間、入力する時間を分けるとしたら、どの順番がよさそうですか。",
+      "同時に行う作業を一つ減らすなら、どれを減らすと楽になりそうですか。"
+    ]
+  },
+  "CS019": {
+    "prompt": "新しい手順に変わったとき、前と同じところ、変わったところ、次にすることのうち、どれが分かりにくかったですか。",
+    "followups": [
+      "前の手順が頭に浮かぶ場面は、どの工程ですか。",
+      "新しい手順を見える形にするなら、比較表、チェックリスト、画面メモのどれが使いやすそうですか。"
+    ]
+  },
+  "CS020": {
+    "prompt": "予定が変わったあと、次に何をするか、誰に確認するか、どの作業を後にするかのうち、どこで止まりましたか。",
+    "followups": [
+      "変更前と変更後の違いを見える形にするとしたら、何を並べると分かりやすいですか。",
+      "変更が入ったときに最初に確認することを一つ決めるなら、何がよさそうですか。"
+    ]
+  },
+  "CS021": {
+    "prompt": "通常ルールと違う対応になったとき、何が変わったのか、誰に確認するのか、どこまで自分で判断するのかのうち、どこが分かりにくかったですか。",
+    "followups": [
+      "通常の流れと今回だけ違う流れを分けるとしたら、どこが違っていましたか。",
+      "例外が出たときの相談先や判断基準は、先に決めておけそうですか。"
+    ]
+  },
+  "CS022": {
+    "prompt": "別案を聞いたとき、自分の案との違い、相手の事情、変える必要がある部分のうち、どこを整理するのに時間がかかりましたか。",
+    "followups": [
+      "自分の案で大事にしたい部分は、どこでしたか。",
+      "相手の案の中で、取り入れてもよさそうな部分はありますか。"
+    ]
+  },
+  "CS023": {
+    "prompt": "練習ではできたことが実際の場面で出にくかったとき、相手、場所、時間、道具のうち、何が変わっていましたか。",
+    "followups": [
+      "実際の場面に近づけて練習するなら、どの条件を入れるとよさそうですか。",
+      "できた場面とできにくかった場面の違いは、何がありそうですか。"
+    ]
+  },
+  "CS024": {
+    "prompt": "結果や相手の反応が見えにくい場面で、何を確認したくなりましたか。",
+    "followups": [
+      "先延ばしにしたくなったとき、何が分かると少し試しやすくなりそうですか。",
+      "影響の小さい試し方にするなら、下書き、仮提出、短い確認のどれがよさそうですか。"
+    ]
+  },
+  "CS049": {
+    "prompt": "突然の声かけ、予定外の変更、知らない人の介入のうち、どれが一番動揺につながりましたか。",
+    "followups": [
+      "その後に作業へ戻るには、休憩、説明、メモ、相談のどれが必要そうですか。",
+      "予告があるとしたら、どのタイミングで何を伝えてもらえると準備しやすいですか。"
+    ]
+  },
+  "CS063": {
+    "prompt": "いつもの流れに変更が入ったとき、どの工程から動き直しにくくなりましたか。",
+    "followups": [
+      "いつもの流れの中に、変更確認の手順を入れるなら、どこに入れると使いやすいですか。",
+      "変更があっても保てる部分は、どの作業や手順ですか。"
+    ]
+  },
+  "CS031": {
+    "prompt": "「いい感じに」「なる早で」「普通に」などの言葉で、期限、量、質、優先順位のどれが分かりにくくなりましたか。",
+    "followups": [
+      "具体的に聞き直すなら、どの言葉を確認したいですか。",
+      "完成基準を見える形にするとしたら、見本、数値、期限のどれがあると分かりやすいですか。"
+    ]
+  },
+  "CS032": {
+    "prompt": "明文化されていないルールの中で、優先順位、報告のタイミング、話しかけ方、作業の進め方のどれが分かりにくかったですか。",
+    "followups": [
+      "最初に確認しておくと安心できるルールは何ですか。",
+      "判断に迷ったとき、誰にどの言い方で確認できそうですか。"
+    ]
+  },
+  "CS033": {
+    "prompt": "相手の言い方が、指示、雑談、注意、冗談のどれなのか分かりにくい場面はありましたか。",
+    "followups": [
+      "その言葉を具体的な行動に置き換えると、何をすればよさそうですか。",
+      "分からないときに確認する一言として、どんな言い方なら使えそうですか。"
+    ]
+  },
+  "CS034": {
+    "prompt": "長い説明の中で、自分が次にすること、期限、目的、注意点のうち、どれが取り出しにくかったですか。",
+    "followups": [
+      "説明を聞いたあと、最初に確認したい要点は何ですか。",
+      "要点を三つに絞るなら、何が残りそうですか。"
+    ]
+  },
+  "CS035": {
+    "prompt": "分からないことを聞きたいとき、何が分からないか、どこまで試したか、何をしてほしいかのうち、どこが言葉にしにくかったですか。",
+    "followups": [
+      "今分かっているところと、止まっているところを分けると、どこになりますか。",
+      "質問文の型を使うなら、「〇〇まではできました。△△で止まっています。□□を確認したいです」のどこを埋められそうですか。"
+    ]
+  },
+  "CS036": {
+    "prompt": "遅れ、ミス、未完了に気づいたとき、どの時点で報告すればよいか迷いましたか。",
+    "followups": [
+      "報告が必要になる合図を決めるなら、時間、進み具合、ミスの種類のどれがよさそうですか。",
+      "報告文を短くするなら、今の状況、困っていること、相談したいことのどれから伝えられそうですか。"
+    ]
+  },
+  "CS037": {
+    "prompt": "雑談に入る、話を終える、距離を取る、話題を選ぶことのうち、どれで疲れやすかったですか。",
+    "followups": [
+      "会話を終えるときに使える一言を用意するとしたら、どんな言い方が自然そうですか。",
+      "人と関わる時間に上限をつけるなら、どのくらいが無理なく過ごせそうですか。"
+    ]
+  },
+  "CS038": {
+    "prompt": "相手の表情、声の調子、返事の短さ、間のうち、何が怖さにつながりましたか。",
+    "followups": [
+      "実際に見えたことと、自分の中で浮かんだ受け取り方を分けると、それぞれ何になりますか。",
+      "確認するなら、相手にどの程度の言葉で聞けると安心できそうですか。"
+    ]
+  },
+  "CS039": {
+    "prompt": "面談、発表、隣席、背後に人がいる場面のうち、どこで見られている感じが強くなりましたか。",
+    "followups": [
+      "席の向きや距離を変えるなら、どの位置だと作業しやすそうですか。",
+      "見られている感じがある中でも、作業に戻るための目印は何が使えそうですか。"
+    ]
+  },
+  "CS040": {
+    "prompt": "作業の現在地として、終わったこと、今していること、残っていることのうち、どれが見えにくくなりましたか。",
+    "followups": [
+      "進捗を見える形にするなら、チェックリスト、付せん、ホワイトボード、画面メモのどれが使いやすそうですか。",
+      "次に確認する地点を決めるなら、何分後、何項目後、どの工程後がよさそうですか。"
+    ]
+  },
+  "CS041": {
+    "prompt": "誤字、入力先、提出漏れ、手順抜けのうち、どのミスに気づきにくかったですか。",
+    "followups": [
+      "確認する場所や順番を決めるなら、どこから見ると見つけやすそうですか。",
+      "自分で確認するものと、誰かに確認してもらうものを分けるなら、どこで分けられそうですか。"
+    ]
+  },
+  "CS042": {
+    "prompt": "疲れに気づいたのは、作業中、休憩後、帰宅後、翌日のどのタイミングでしたか。",
+    "followups": [
+      "疲れのサインとして、眠気、肩こり、頭痛、集中低下、返事のしづらさのうち、近いものはありますか。",
+      "疲れ切る前に休憩を入れるなら、どの時間や作業の後がよさそうですか。"
+    ]
+  },
+  "CS043": {
+    "prompt": "その場では言葉にしにくかった気持ちは、不安、焦り、怒り、恥ずかしさ、疲れのうち、近いものがありますか。",
+    "followups": [
+      "気持ちが言葉にならないとき、体の反応や行動にはどんな変化が出ていましたか。",
+      "選択肢やカードがあるとしたら、どんな言葉があると選びやすいですか。"
+    ]
+  },
+  "CS044": {
+    "prompt": "眠気、空腹、頭痛、動悸、胃の重さのうち、後から気づいた体のサインはありますか。",
+    "followups": [
+      "作業が落ちる前に確認できそうな体のサインは、どれですか。",
+      "体の状態を確認するタイミングを作るなら、作業前、休憩前、終業前のどこがよさそうですか。"
+    ]
+  },
+  "CS045": {
+    "prompt": "その場で頭に浮かんだ言葉は、どんな言葉でしたか。",
+    "followups": [
+      "その言葉と、実際に起きている事実を分けると、それぞれ何になりますか。",
+      "その言葉が浮かんだままでも、次に小さくできる行動は何がありそうですか。"
+    ]
+  },
+  "CS046": {
+    "prompt": "何についての考えが続いて、作業へ戻りにくくなりましたか。",
+    "followups": [
+      "その考えが強くなるきっかけは、注意、失敗、予定、不安のどれに近いですか。",
+      "作業へ戻る前に、メモに書く、相談する、休憩するなど、どの整理が使えそうですか。"
+    ]
+  },
+  "CS057": {
+    "prompt": "頑張りすぎた後の反動は、当日、翌日、週末のどのタイミングで出やすいですか。",
+    "followups": [
+      "作業量、時間、対人対応、確認回数のうち、どこに上限を決めると続けやすそうですか。",
+      "次の日に疲れを残しにくくするために、どこで休憩や終了を入れるとよさそうですか。"
+    ]
+  },
+  "CS048": {
+    "prompt": "特定の場所、音、席、時間帯のうち、不安と結びつきやすいものはありますか。",
+    "followups": [
+      "その場面を少し試すなら、どんな条件なら安全に練習できそうですか。",
+      "支援者が一緒にいる、短時間だけ入る、場所を変えるなど、どの工夫が使えそうですか。"
+    ]
+  },
+  "CS050": {
+    "prompt": "始める前に、どんな失敗が起きそうだと感じましたか。",
+    "followups": [
+      "失敗しても影響が小さい形にするとしたら、下書き、練習、仮提出のどれがよさそうですか。",
+      "試す時間や範囲を小さくするなら、どのくらいなら始められそうですか。"
+    ]
+  },
+  "CS051": {
+    "prompt": "提出や相談が遅れたとき、どこまで整えないと出せないと感じていましたか。",
+    "followups": [
+      "仮提出として見てもらうなら、どの段階なら出せそうですか。",
+      "完成基準を先に決めるなら、最低限必要な条件は何ですか。"
+    ]
+  },
+  "CS052": {
+    "prompt": "確認してもらいたくなったのは、内容、手順、完成度、相手の反応のどれでしたか。",
+    "followups": [
+      "確認する回数や場面を決めるなら、どこで確認すれば十分そうですか。",
+      "自分で判断するための基準として、何が見えると次へ進めそうですか。"
+    ]
+  },
+  "CS053": {
+    "prompt": "苦手な作業の前に、別作業、スマートフォン確認、離席、連絡回避のうち、どれに移りやすかったですか。",
+    "followups": [
+      "苦手な作業に入る前の最初の一手を小さくするとしたら、何ができそうですか。",
+      "作業を始める合図や基準を決めるなら、どんな条件がよさそうですか。"
+    ]
+  },
+  "CS054": {
+    "prompt": "固まったとき、話す、動く、返事をする、考えることのうち、どれがしにくくなりましたか。",
+    "followups": [
+      "その場で必要だったのは、休む場所、短い声かけ、時間を置くこと、メモで伝えることのどれに近いですか。",
+      "落ち着いた後、作業や相談へ戻るための最初の一手は何がよさそうですか。"
+    ]
+  },
+  "CS055": {
+    "prompt": "強い反応が出た前に、注意、変更、音、対人刺激のうち、何が重なっていましたか。",
+    "followups": [
+      "その場から少し距離を取るなら、どこへ移動する、誰に伝える、何分休むのどれが使えそうですか。",
+      "落ち着いた後に話し直すとしたら、どんな順番で確認するとよさそうですか。"
+    ]
+  },
+  "CS056": {
+    "prompt": "その場では合わせられても、後から疲れが出たのは、会話、表情、返事、姿勢、時間のうち、どこに力を使っていたからですか。",
+    "followups": [
+      "人と関わる前後に休憩を入れるなら、どのタイミングがよさそうですか。",
+      "無理に合わせすぎないために、短く伝えられる一言はありますか。"
+    ]
+  },
+  "CS058": {
+    "prompt": "本当は進められそうでも、確認がないと止まりやすい場面はどこでしたか。",
+    "followups": [
+      "どの作業なら、自分で判断して進める練習を始められそうですか。",
+      "確認を減らす順番を決めるなら、まず何を自分で確認できそうですか。"
+    ]
+  },
+  "CS059": {
+    "prompt": "言い出しにくかったのは、分からないこと、遅れたこと、ミス、体調不良のどれでしたか。",
+    "followups": [
+      "相談するなら、誰に、いつ、どの一文で伝えると始めやすそうですか。",
+      "早めに言うための合図を決めるなら、時間、進み具合、体調のどれがよさそうですか。"
+    ]
+  },
+  "CS060": {
+    "prompt": "「自分には無理」と感じたとき、どの作業や場面が頭に浮かんでいましたか。",
+    "followups": [
+      "条件を変えるとしたら、時間、量、手順、相談先のどれを変えると試しやすそうですか。",
+      "小さくできたことを確認するなら、どんな行動を記録できそうですか。"
+    ]
+  },
+  "CS061": {
+    "prompt": "調べものや企画の途中で、どの情報やアイデアから元の目的からそれやすくなりましたか。",
+    "followups": [
+      "発想を広げる時間と、元の作業へ戻る時間を分けるなら、どこで区切るとよさそうですか。",
+      "元の目的を思い出すために、画面やメモに何を書いておくと戻りやすいですか。"
+    ]
+  },
+  "CS062": {
+    "prompt": "成果が先にある作業で、今日やる一歩として何が見えにくくなっていましたか。",
+    "followups": [
+      "今日終わったことを見える形にするなら、何をチェックできそうですか。",
+      "作業を小さく区切るなら、何分、何ページ、何項目のように、どの単位が使いやすそうですか。"
+    ]
+  },
+  "CS064": {
+    "prompt": "集中していた作業から、休憩、終了、次の予定へ移るとき、どこで切り替えにくくなりましたか。",
+    "followups": [
+      "集中を止める合図を決めるなら、時間、アラーム、作業の区切り、声かけのどれがよさそうですか。",
+      "次の予定へ移る前に、保存、メモ、片づけ、休憩のうち、何を挟むと切り替えやすいですか。"
+    ]
+  }
+};
 const getLevelText = (item) => LEVEL_BY_ID[item.id] ?? LEVEL_BY_CG[item.cg] ?? "";
 const SUPPORT_PLAN_FIELDS = [
   ['core', '中核の見立て'],
@@ -1477,9 +1938,16 @@ function supportPlanText(plan) {
 function supportPlanHTML(plan) {
   return SUPPORT_PLAN_FIELDS.map(([key, label]) => `<div class="info-subitem"><strong>${escapeHTML(label)}</strong><p>${escapeHTML(plan?.[key] || '')}</p></div>`).join('');
 }
+function questionCardHTML(item, blockClass = 'info-block question') {
+  const question = item ? QUESTIONS_BY_ID[item.id] : null;
+  if(!question) return '';
+  const followups = (question.followups || []).map(text => `<li>${escapeHTML(text)}</li>`).join('');
+  return `<section class="${blockClass}"><div class="info-subitem"><strong>声かけ例</strong><p>${escapeHTML(question.prompt || '')}</p></div><div class="info-subitem"><strong>状況の深堀りとして</strong>${followups ? `<ul class="question-list">${followups}</ul>` : '<p>追加の問いはありません。</p>'}</div></section>`;
+}
 function textOf(item) {
   const plan = getSupportPlan(item);
-  return [item.id, item.title, item.cg, item.cgTitle, item.visible, item.methods, item.strength, DAILY_BY_ID[item.id] || '', getLevelText(item), supportPlanText(plan), (item.tags||[]).join(' ')].join(' ');
+  const question = QUESTIONS_BY_ID[item.id] || {};
+  return [item.id, item.title, item.cg, item.cgTitle, item.visible, item.methods, item.strength, DAILY_BY_ID[item.id] || '', getLevelText(item), supportPlanText(plan), question.prompt || '', ...(question.followups || []), (item.tags||[]).join(' ')].join(' ');
 }
 function currentEntry() { return ENTRY_FILTERS.find(x => x.id === state.exploreEntry) || ENTRY_FILTERS[0]; }
 function itemMatchesEntry(item) {
@@ -1490,14 +1958,14 @@ function itemMatchesEntry(item) {
 }
 function itemMatchesGlobalCg(item) { return state.filterCg === 'all' || item.cg === state.filterCg; }
 function itemMatchesExplore(item) { return itemMatchesGlobalCg(item) && itemMatchesEntry(item); }
-function searchIsActive() { return state.searchQuery.trim() || state.searchTags.size > 0; }
+function searchIsActive() { return state.searchQuery.trim() || state.searchCg !== 'all' || state.searchTags.size > 0; }
 function itemMatchesSearch(item) {
   if(!searchIsActive()) return false;
   const q = norm(state.searchQuery.trim());
   const words = q ? q.split(/\s+/).filter(Boolean) : [];
   const text = norm(textOf(item));
   const qOk = !words.length || words.every(w => text.includes(w));
-  const cgOk = itemMatchesGlobalCg(item);
+  const cgOk = state.searchCg === 'all' || item.cg === state.searchCg;
   const tagOk = state.searchTags.size === 0 || [...state.searchTags].every(t => item.tags.includes(t));
   return qOk && cgOk && tagOk;
 }
@@ -1583,9 +2051,8 @@ function areaCgList(area) {
 }
 function itemMatchesPlot(item) {
   const area = areaForCg(item.cg);
-  const cgOk = itemMatchesGlobalCg(item);
   const areaOk = state.plotArea === 'all' || area.id === state.plotArea;
-  return cgOk && areaOk;
+  return areaOk;
 }
 function renderPlotAreaChips() {
   if(!els.plotAreaChips) return;
@@ -1595,7 +2062,6 @@ function renderPlotAreaChips() {
 function areaCardHTML(area, items) {
   const areaItems = items.filter(item => area.cgs.includes(item.cg));
   if(state.plotArea !== 'all' && state.plotArea !== area.id) return '';
-  if(state.filterCg !== 'all' && !areaItems.length) return '';
   const body = areaItems.length
     ? `<div class="area-scenes">${areaItems.map(item => `<button type="button" class="area-scene-btn ${state.plotSelected === item.id ? 'active' : ''}" data-plot-id="${escapeHTML(item.id)}"><span class="area-scene-title">${escapeHTML(item.title)}</span><span class="area-scene-code">${escapeHTML(item.cg)} / ${escapeHTML(item.id)}</span></button>`).join('')}</div>`
     : '<div class="area-empty">この条件に合う場面はありません。</div>';
@@ -1617,13 +2083,15 @@ function renderPlot() {
 }
 function openPlotModal(id) {
   const item = findItem(id);
-  if(!item || !els.plotModalBackdrop || !els.plotModalContent) return;
+  if(!item) return;
   state.plotSelected = id;
   renderPlot();
-  els.plotModalContent.innerHTML = detailHTML(item);
-  els.plotModalBackdrop.classList.add('is-open');
-  els.plotModalBackdrop.setAttribute('aria-hidden', 'false');
-  if(els.plotModalClose) els.plotModalClose.focus();
+  const src = SCENE_IMAGES[item.id];
+  if(src) {
+    openImageModal(src, `${item.id} ${item.title}`, item.id);
+  } else {
+    openImageModalDetail(id);
+  }
 }
 function closePlotModal() {
   if(!els.plotModalBackdrop) return;
@@ -1633,10 +2101,14 @@ function closePlotModal() {
 function imageModalInfoHTML(item) {
   if(!item) return '';
   const plan = getSupportPlan(item);
+  const question = QUESTIONS_BY_ID[item.id];
+  const promptCard = question?.prompt ? `<div class="image-modal-card"><strong>声かけ例</strong><p>${escapeHTML(question.prompt)}</p></div>` : '';
   return `<div class="image-modal-info">
     <h3>${escapeHTML(item.title)} <span class="inline-code">${escapeHTML(item.id)}</span></h3>
     <div class="image-modal-card"><strong>この場面で起きていること</strong><p>${escapeHTML(item.visible)}</p></div>
     <div class="image-modal-card"><strong>日常にも通じる支援の基本方針</strong><p>${escapeHTML(plan?.everyday || '')}</p></div>
+    ${promptCard}
+    <button type="button" class="image-modal-detail-link" data-modal-detail-id="${escapeHTML(item.id)}">詳細を見る</button>
   </div>`;
 }
 function openImageModal(src, title, sceneId) {
@@ -1657,6 +2129,16 @@ function closeImageModal() {
   els.imageModalBackdrop.classList.remove('is-open');
   els.imageModalBackdrop.setAttribute('aria-hidden', 'true');
   if(els.imageModalContent) els.imageModalContent.innerHTML = '';
+}
+function openImageModalDetail(id) {
+  const item = findItem(id);
+  if(!item || !els.imageModalBackdrop || !els.imageModalContent) return;
+  els.imageModalContent.innerHTML = `<div class="image-modal-detail-panel">${detailHTML(item)}</div>`;
+  const titleEl = document.getElementById('imageModalTitle');
+  if(titleEl) titleEl.textContent = `${item.id} ${item.title}`;
+  els.imageModalBackdrop.classList.add('is-open');
+  els.imageModalBackdrop.setAttribute('aria-hidden', 'false');
+  els.imageModalContent.scrollTop = 0;
 }
 function highlight(s) {
   let out = escapeHTML(s);
@@ -1751,6 +2233,7 @@ function detailHTML(item) {
       </div>
     </section>
     <section class="info-block support"><h3>支援の組み立て</h3>${supportPlanHTML(plan)}</section>
+    ${questionCardHTML(item)}
     <section class="info-block strength"><h3>強みとして使える面</h3><p>${escapeHTML(item.strength)}</p></section>
     <section class="info-block"><h3>関連する場面</h3><div class="related-list">${related || '<p>関連する場面はありません。</p>'}</div></section>
     <section class="info-block"><h3>分類コード・支援コード</h3><p>${escapeHTML(item.cgTitle)} <span class="inline-code">${escapeHTML(item.cg)}</span> <span class="inline-code">${escapeHTML(item.id)}</span></p></section>
@@ -1779,6 +2262,7 @@ function renderSearch() {
   [...els.searchTags.querySelectorAll('.tag-chip')].forEach(btn => btn.classList.toggle('active', state.searchTags.has(btn.dataset.tag)));
 }
 function renderFilter() {
+  if(!els.filterList || !els.filterCount || !els.filterDetail) return;
   const items = DATA.items.filter(itemMatchesGlobalCg);
   if(state.filterSelected && !items.find(x => x.id === state.filterSelected)) state.filterSelected = null;
   if(!state.filterSelected) state.filterSelected = items[0]?.id || null;
@@ -1810,7 +2294,7 @@ function renderReading() {
         ${items.map(item => {
           const bridge = bridgeFor(item);
           const plan = getSupportPlan(item);
-          return `<section class="scene-row" id="${escapeHTML(item.id)}"><h3>${escapeHTML(item.title)} <span class="inline-code">${escapeHTML(item.id)}</span></h3><div class="tag-row">${(item.tags || []).map(t => `<span class="tag">${escapeHTML(t)}</span>`).join('')}</div><div class="scene-row-layout"><div class="scene-row-media">${sceneImageHTML(item)}<div class="scene-row-below"><div class="small-block scene"><strong>この場面で起きていること</strong><p>${escapeHTML(item.visible)}</p></div><div class="small-block bridge"><div class="info-subitem"><strong>日常的な水準</strong><p>${escapeHTML(bridge.daily)}</p></div><div class="info-subitem"><strong>支援を要する水準</strong><p>${escapeHTML(bridge.level)}</p></div></div></div></div><div class="columns"><div class="small-block support"><strong>支援の組み立て</strong>${supportPlanHTML(plan)}</div><div class="small-block strength"><strong>強みとして使える面</strong><p>${escapeHTML(item.strength)}</p></div></div></div></section>`;
+          return `<section class="scene-row" id="${escapeHTML(item.id)}"><h3>${escapeHTML(item.title)} <span class="inline-code">${escapeHTML(item.id)}</span></h3><div class="tag-row">${(item.tags || []).map(t => `<span class="tag">${escapeHTML(t)}</span>`).join('')}</div><div class="scene-row-layout"><div class="scene-row-media">${sceneImageHTML(item)}<div class="scene-row-below"><div class="small-block scene"><strong>この場面で起きていること</strong><p>${escapeHTML(item.visible)}</p></div><div class="small-block bridge"><div class="info-subitem"><strong>日常的な水準</strong><p>${escapeHTML(bridge.daily)}</p></div><div class="info-subitem"><strong>支援を要する水準</strong><p>${escapeHTML(bridge.level)}</p></div></div></div></div><div class="columns"><div class="small-block support"><strong>支援の組み立て</strong>${supportPlanHTML(plan)}</div>${questionCardHTML(item, 'small-block question')}<div class="small-block strength"><strong>強みとして使える面</strong><p>${escapeHTML(item.strength)}</p></div></div></div></section>`;
         }).join('')}
       </div>
     </article>`;
@@ -1848,6 +2332,7 @@ function setView(name) {
 }
 function jumpToExplore(id) {
   closePlotModal();
+  closeImageModal();
   state.filterCg = 'all';
   state.exploreEntry = 'all';
   state.exploreSelected = id;
@@ -1862,10 +2347,37 @@ function jumpToExplore(id) {
     if(right) right.scrollIntoView({behavior: 'smooth', block: 'start'});
   }
 }
+function jumpToReadingScene(id) {
+  closeImageModal();
+  setView('read');
+  window.setTimeout(() => {
+    const target = document.getElementById(id);
+    if(!target) return;
+    target.scrollIntoView({behavior: 'smooth', block: 'start'});
+    const title = target.querySelector('h3');
+    if(title) {
+      title.setAttribute('tabindex', '-1');
+      title.focus({ preventScroll: true });
+    }
+  }, 40);
+}
+function setSearchMode(mode) {
+  state.searchMode = mode === 'plot' ? 'plot' : 'keyword';
+  if(els.keywordSearchPanel) els.keywordSearchPanel.hidden = state.searchMode !== 'keyword';
+  if(els.searchPlotPanel) els.searchPlotPanel.hidden = state.searchMode !== 'plot';
+  els.searchModeButtons.forEach(btn => btn.setAttribute('aria-selected', btn.dataset.searchMode === state.searchMode ? 'true' : 'false'));
+  if(state.searchMode === 'plot') {
+    renderPlot();
+  } else {
+    renderSearch();
+  }
+}
 function init() {
-  for(const cg of DATA.cgs) {
-    const text = `${cg.title}（${cg.id}）`;
-    const opt = document.createElement('option'); opt.value = cg.id; opt.textContent = text; els.globalCg.appendChild(opt);
+  if(els.searchCg) {
+    for(const cg of DATA.cgs) {
+      const text = `${cg.title}（${cg.id}）`;
+      const opt = document.createElement('option'); opt.value = cg.id; opt.textContent = text; els.searchCg.appendChild(opt);
+    }
   }
   for(const tag of DATA.tags) {
     const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'tag-chip'; btn.textContent = tag; btn.dataset.tag = tag;
@@ -1881,34 +2393,17 @@ function init() {
     renderExplore();
   });
   els.searchInput.addEventListener('input', e => { state.searchQuery = e.target.value; state.searchSelected = null; renderSearch(); });
+  els.searchCg.addEventListener('change', e => { state.searchCg = e.target.value; state.searchSelected = null; renderSearch(); renderPlot(); });
   els.plotAreaChips.addEventListener('click', e => { const btn = e.target.closest('[data-plot-area]'); if(!btn) return; state.plotArea = btn.dataset.plotArea; state.plotSelected = null; closePlotModal(); renderPlot(); });
-  els.globalCg.addEventListener('change', e => {
-    state.filterCg = e.target.value;
-    state.exploreSelected = null;
-    state.searchSelected = null;
-    state.plotSelected = null;
-    state.filterSelected = null;
-    closePlotModal();
-    renderExplore();
-    renderSearch();
-    renderPlot();
-    renderFilter();
-  });
-  els.clearGlobalCg.addEventListener('click', () => {
-    state.filterCg = 'all';
-    state.filterSelected = null;
-    els.globalCg.value = 'all';
-    renderExplore();
-    renderSearch();
-    renderPlot();
-    renderFilter();
-  });
-  els.clearSearch.addEventListener('click', () => { state.searchQuery = ''; state.searchTags.clear(); state.searchSelected = null; els.searchInput.value = ''; renderSearch(); });
+  els.searchModeButtons.forEach(btn => btn.addEventListener('click', () => setSearchMode(btn.dataset.searchMode)));
+  els.clearSearch.addEventListener('click', () => { state.searchQuery = ''; state.searchCg = 'all'; state.searchTags.clear(); state.searchSelected = null; els.searchInput.value = ''; if(els.searchCg) els.searchCg.value = 'all'; renderSearch(); renderPlot(); });
   document.body.addEventListener('click', e => {
     const mobileClose = e.target.closest('.mobile-detail-close');
     if(mobileClose) { closeMobileDetail(); return; }
     const jump = e.target.closest('[data-jump]');
     if(jump) { jumpToExplore(jump.dataset.jump); return; }
+    const modalDetail = e.target.closest('[data-modal-detail-id]');
+    if(modalDetail) { openImageModalDetail(modalDetail.dataset.modalDetailId); return; }
     const imageBtn = e.target.closest('[data-image-src]');
     if(imageBtn) { openImageModal(imageBtn.dataset.imageSrc, imageBtn.dataset.imageTitle, imageBtn.dataset.sceneId); return; }
     const plotNode = e.target.closest('[data-plot-id]');
